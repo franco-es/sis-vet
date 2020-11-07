@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const app = express();
 
 // CONFIGURAR ARCHIVOS DE RUTAS
-var user_routes = require("./routes/usuarios");
+// var user_routes = require("./routes/usuarios");
 
 // MIDDLEWARES
 app.use(bodyParser.json());
@@ -26,6 +26,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // });
 
 // REESCRIBIMOS LAS RUTAS
-app.use("/api", user_routes);
+// app.use("/api", user_routes);
 
 module.exports = app;
