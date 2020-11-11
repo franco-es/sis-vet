@@ -32,8 +32,8 @@ const login = (req, res, next) => {
     res.status(400).send({
       satus: "FAIL",
       message: "faltan datos por enviar en el validador",
-      email,
-      password,
+      Email: email,
+      Contrasenia: password,
     });
   }
 };
@@ -55,4 +55,22 @@ const update = (req, res, next) => {
   }
 };
 
-module.exports = { create, login, update };
+const validate_employee = (req, res, next) => {
+  const { nombre, apellido, matricula } = req.body;
+  try {
+    var validate_nombre = !validator.isEmpty(nombre);
+    var validate_apellido = !validator.isEmpty(apellido);
+    var validate_matricula = !validator.isEmpty(matricula);
+    next();
+  } catch (error) {
+    res.status(400).send({
+      satus: "FAIL",
+      message: "faltan datos por enviar en el validador",
+      nombre,
+      apellido,
+      matricula,
+    });
+  }
+};
+
+module.exports = { create, login, update, validate_employee };
