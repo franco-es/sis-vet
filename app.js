@@ -8,8 +8,9 @@ const bodyParser = require("body-parser");
 const app = express();
 
 // CONFIGURAR ARCHIVOS DE RUTAS
-var user_routes = require("./routes/usuarios");
+const user_routes = require("./routes/usuarios");
 const employee_routes = require("./routes/employee");
+const owner_routes = require("./routes/owner");
 
 // MIDDLEWARES
 app.use(bodyParser.json());
@@ -30,5 +31,6 @@ app.use((req, res, next) => {
 // REESCRIBIMOS LAS RUTAS
 app.use("/api/user", user_routes);
 app.use("/api/employee", employee_routes);
+app.use("/api/owner", owner_routes);
 
 module.exports = app;

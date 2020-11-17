@@ -73,4 +73,31 @@ const validate_employee = (req, res, next) => {
   }
 };
 
-module.exports = { create, login, update, validate_employee };
+const validate_owner = (req, res, next) => {
+  const { nombre, apellido, telefono, direccion } = req.body;
+  try {
+    validate_nombre = !validator.isEmpty(nombre);
+    validate_apellido = !validator.isEmpty(apellido);
+    validate_telefono = !validator.isEmpty(telefono);
+    validate_direccion = !validator.isEmpty(direccion);
+  } catch (error) {
+    res.status(400).send({
+      satus: "FAIL",
+      message: "faltan datos por enviar en el validador",
+      nombre,
+      apellido,
+      telefono,
+      direccion,
+    });
+  }
+  if (
+    validate_nombre &&
+    validate_apellido &&
+    validate_telefono &&
+    validate_direccion
+  ) {
+    next();
+  }
+};
+
+module.exports = { create, login, update, validate_employee, validate_owner };
