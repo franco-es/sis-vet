@@ -1,18 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const ownerController = require("./../controllers/owner").default;
-const {
-  create,
-  login,
-  update,
-  validate_owner,
-} = require("./../middlewares/validateData");
+const ownerController = require("./../controllers/owner");
+const { validate_owner } = require("./../middlewares/validateData");
 const md_auth = require("./../middlewares/authenticated");
 
 router.post(
-  "/new/owner",
+  "/new",
   [md_auth.authenticated, validate_owner],
-  ownerController.saveVeterinario
+  ownerController.save
 );
+router.get("/", md_auth.authenticated, ownerController.getByVeteId);
+router.get("/:id", md_auth.authenticated, ownerController.getOwner);
+router.put("/update/:id", md_auth.authenticated, ownerController.getOwner);
 
 module.exports = router;
