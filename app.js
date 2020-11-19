@@ -11,6 +11,7 @@ const app = express();
 const user_routes = require("./routes/usuarios");
 const employee_routes = require("./routes/employee");
 const owner_routes = require("./routes/owner");
+const pet_routes = require("./routes/pets");
 
 // MIDDLEWARES
 app.use(bodyParser.json());
@@ -32,5 +33,6 @@ app.use((req, res, next) => {
 app.use("/api/user", user_routes);
 app.use("/api/employee", employee_routes);
 app.use("/api/owner", owner_routes);
+app.use("/api/pet", pet_routes);
 
 module.exports = app;

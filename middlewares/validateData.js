@@ -100,4 +100,40 @@ const validate_owner = (req, res, next) => {
   }
 };
 
-module.exports = { create, login, update, validate_employee, validate_owner };
+const validate_pet = (req, res, next) => {
+  const { nombre, especie, raza, color, f_nacimiento } = req.body;
+  try {
+    validate_nombre = !validator.isEmpty(nombre);
+    validate_especie = !validator.isEmpty(especie);
+    validate_raza = !validator.isEmpty(raza);
+    validate_color = !validator.isEmpty(color);
+    validate_f_nacimiento = !validator.isEmpty(f_nacimiento);
+  } catch (error) {
+    res.status(400).send({
+      satus: "FAIL",
+      message: "faltan datos por enviar en el validador",
+      nombre,
+      apellido,
+      telefono,
+      direccion,
+    });
+  }
+  if (
+    validate_nombre &&
+    validate_especie &&
+    validate_raza &&
+    validate_color &&
+    validate_f_nacimiento
+  ) {
+    next();
+  }
+};
+
+module.exports = {
+  create,
+  login,
+  update,
+  validate_employee,
+  validate_owner,
+  validate_pet,
+};

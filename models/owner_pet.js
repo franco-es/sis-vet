@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 var consultaSchema = {
-  fecha: Date,
+  fecha: { type: Date, default: Date.now },
   contenido: String,
   diagnostico: String,
   tratamiento: String,
@@ -15,7 +15,7 @@ const consulta = mongoose.model("consulta", consultaSchema);
 
 var vacunaSchema = {
   nombre: String,
-  f_aplicacion: String,
+  f_aplicacion: { type: Date, default: Date.now },
   prox_aplicacion: String,
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 };
@@ -23,7 +23,7 @@ var vacunaSchema = {
 const vacuna = mongoose.model("vacuna", vacunaSchema);
 
 var cirugiaSchema = {
-  fecha: Date,
+  fecha: { type: Date, default: Date.now },
   contenido: String,
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 };
@@ -35,7 +35,8 @@ var petSchema = {
   especie: String,
   raza: String,
   color: String,
-  f_nacimiento: Date,
+  f_nacimiento: String,
+  created: {type:Date, default: Date.now},
   consultas: [consultaSchema],
   vacunas: [vacunaSchema],
   cirugia: [cirugiaSchema],
