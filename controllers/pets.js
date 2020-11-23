@@ -4,7 +4,7 @@ const Owner = require("./../models/owner_pet");
 
 const controller = {
   save: (req, res) => {
-    const { idOwner } = req.params;
+    const { idOwner } = req.query;
     const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
     Owner.findById(idOwner).exec((err, owner) => {
@@ -99,25 +99,31 @@ const controller = {
   },
   delete: (req, res) => {     //NO USAR!! ELIMINA EL USUARIO.
     const { idPet } = req.params;
+    const { idOwner } = req.query;
 
-    Owner.findOneAndDelete({ "mascota._id": idPet }, (err, petUpdated) => {
+    Owner.findById({ _id: idOwner }, (err, duenio) => {
       if (err) {
         return res.status(500).send({
           status: "error",
           message: "Error en la petición",
+          err,
         });
       }
 
-      if (!petUpdated) {
+      if (!duenio) {
         return res.status(404).send({
           status: "error",
-          message: "No existe el perro / gato/ etc",
+          message: "No existe el duenio",
         });
       }
-      return res.status(200).send({
-        status: "success",
-        mascota: "mascota eliminada",
-      });
+      duenio.mascota.remove(idPet);
+      duenio.save((err) => {
+        
+        return res.status(200).send({
+          status: "success",
+          duneio: duenio,
+        });
+      })
     });
   },
 };

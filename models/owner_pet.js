@@ -52,4 +52,5 @@ var ownerSchema = {
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
   mascota: [petSchema],
 };
+
 module.exports = mongoose.model("owner", ownerSchema);
