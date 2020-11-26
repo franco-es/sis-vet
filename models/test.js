@@ -36,7 +36,7 @@ var petSchema = {
   raza: String,
   color: String,
   f_nacimiento: String,
-  created: {type:Date, default: Date.now},
+  created: { type: Date, default: Date.now },
   consultas: [consultaSchema],
   vacunas: [vacunaSchema],
   cirugia: [cirugiaSchema],

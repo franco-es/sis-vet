@@ -39,6 +39,9 @@ const controller = {
           }
           Owner.findById(owner._id)
             .populate("mascota")
+            .populate("consulta")
+            .populate("vacuna")
+            .populate("cirugia")
             .exec((err, result) => {
               if (err) {
                 return res.status(500).send({
@@ -97,7 +100,8 @@ const controller = {
       }
     );
   },
-  delete: (req, res) => {     //NO USAR!! ELIMINA EL USUARIO.
+  delete: (req, res) => {
+    //NO USAR!! ELIMINA EL USUARIO.
     const { idPet } = req.params;
     const { idOwner } = req.query;
 
@@ -118,12 +122,37 @@ const controller = {
       }
       duenio.mascota.remove(idPet);
       duenio.save((err) => {
-        
         return res.status(200).send({
           status: "success",
           duneio: duenio,
         });
-      })
+      });
+    });
+  },
+  findOne: (req, res) => {
+    const { idPet } = req.params;
+    const { idOwner } = req.query;
+
+    Owner.findById({ _id: idOwner }, (err, duenio) => {
+      if (err) {
+        return res.status(500).send({
+          status: "error",
+          message: "Error en la petición",
+          err,
+        });
+      }
+
+      if (!duenio) {
+        return res.status(404).send({
+          status: "error",
+          message: "No existe el duenio",
+        });
+      }
+      const mascota = duenio.mascota.id(idPet);
+      return res.status(200).send({
+        status: "success",
+        mascota: mascota,
+      });
     });
   },
 };
