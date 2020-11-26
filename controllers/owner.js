@@ -1,6 +1,6 @@
 "use strict";
 
-const Owner = require("../models/owner_pet");
+const { Owner } = require("../models/owner_pet");
 
 const controller = {
   save: (req, res) => {

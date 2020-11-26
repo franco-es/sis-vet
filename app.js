@@ -12,6 +12,7 @@ const user_routes = require("./routes/usuarios");
 const employee_routes = require("./routes/employee");
 const owner_routes = require("./routes/owner");
 const pet_routes = require("./routes/pets");
+const test_routes = require("./routes/test");
 
 // MIDDLEWARES
 app.use(bodyParser.json());
@@ -34,5 +35,6 @@ app.use("/api/user", user_routes);
 app.use("/api/employee", employee_routes);
 app.use("/api/owner", owner_routes);
 app.use("/api/pet", pet_routes);
+app.use("/api/test", test_routes);
 
 module.exports = app;
