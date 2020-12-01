@@ -1,37 +1,32 @@
 "use strict";
 
 const { Owner } = require("../models/owner_pet");
+const { vete, Veterinaria } = require("../models/users");
 
 const controller = {
   save: (req, res) => {
     const { nombre, apellido, telefono, direccion } = req.body;
     const { sub } = req.user;
 
-    const owner = new Owner();
-    owner.nombre = nombre;
-    owner.apellido = apellido;
-    owner.telefono = telefono;
-    owner.direccion = direccion;
-    owner.vete = sub;
+    const owner = new Owner({
+      nombre: nombre,
+      apellido: apellido,
+      telefono: telefono,
+      direccion: direccion,
+      vete: sub,
+    });
 
     owner.save((err, ownerStored) => {
-      if (err) {
-        return res.status(500).send({
-          status: "fail",
-          message: "error al guardar el duenio",
+      if (err) return res.send({ err: err });
+      if (!ownerStored) return res.send({ message: "no hay usuario" });
+      Owner.findOne(owner._id)
+        .populate("Veterinaria")
+        .exec((err, owner1) => {
+          if (err) return res.send({ err: err });
+          return res.send({
+            owner1,
+          });
         });
-      }
-      if (!ownerStored) {
-        return res.status(500).send({
-          status: "error",
-          message: "el duenio no se guardo correctamente",
-        });
-      }
-      return res.status(200).send({
-        status: "success",
-        message: "el duenio se guardo correctamente",
-        ownerStored,
-      });
     });
   },
   getByVeteId: (req, res) => {

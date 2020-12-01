@@ -26,7 +26,9 @@ var userSchema = Schema({
 
 
 
-module.exports = mongoose.model("Veterinaria", userSchema);
+const Veterinaria =  mongoose.model("veterinaria", userSchema);
+
+module.exports = {vete, Veterinaria}
 // userSchema.methods.toJSON = () => {
 //   const obj = this.toObjct();
 //   delete obj.password;

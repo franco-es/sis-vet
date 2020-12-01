@@ -11,7 +11,10 @@ const app = express();
 const user_routes = require("./routes/usuarios");
 const employee_routes = require("./routes/employee");
 const owner_routes = require("./routes/owner");
-const pet_routes = require("./routes/pets");
+const pet_routes = require("./routes/mascotas/pets");
+const consulta_routes = require("./routes/mascotas/consulta");
+const cirugia_routes = require("./routes/mascotas/cirugia");
+const vacuna_routes = require("./routes/mascotas/vacuna");
 const test_routes = require("./routes/test");
 
 // MIDDLEWARES
@@ -35,6 +38,9 @@ app.use("/api/user", user_routes);
 app.use("/api/employee", employee_routes);
 app.use("/api/owner", owner_routes);
 app.use("/api/pet", pet_routes);
+app.use("/api/consulta", consulta_routes);
+app.use("/api/cirugia", cirugia_routes);
+app.use("/api/vacuna", vacuna_routes);
 app.use("/api/test", test_routes);
 
 module.exports = app;
