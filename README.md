@@ -50,7 +50,7 @@ _Menciona las herramientas que utilizaste para crear tu proyecto_
 
 _En el proyecto hemos estado 3 personas._
 _Juan Ignacio Valderrama_
-_Javier ._
+_Javier Silva_
 _Franco Estrella_
 
 
