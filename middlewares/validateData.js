@@ -129,6 +129,33 @@ const validate_pet = (req, res, next) => {
   }
 };
 
+const validate_consult = (req, res, next) => {
+  const { fecha, contenido, diagnostico, tratamiento } = req.body;
+
+  try {
+    validate_fecha = !validator.isEmpty(fecha);
+    validate_contenido = !validator.isEmpty(contenido);
+    validate_diagnostico = !validator.isEmpty(diagnostico);
+    validate_tratamiento = !validator.isEmpty(tratamiento);
+  } catch (error) {
+    res.status(400).send({
+      satus: "FAIL",
+      message: "faltan datos por enviar en el validador",
+      fecha,
+      contenido,
+      diagnostico,
+      tratamiento,
+    });
+  }
+  if (
+    validate_fecha &&
+    validate_contenido &&
+    validate_diagnostico &&
+    validate_tratamiento
+  ) {
+    next();
+  }
+};
 module.exports = {
   create,
   login,
@@ -136,4 +163,5 @@ module.exports = {
   validate_employee,
   validate_owner,
   validate_pet,
+  validate_consult,
 };

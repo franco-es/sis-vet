@@ -4,7 +4,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
-const User = require("./../models/users");
+const { Veterinaria } = require("./../models/users");
 const jwt = require("../services/jwt");
 // const { default: validator } = require("validator");
 
@@ -15,7 +15,7 @@ const controller = {
   saveVeterinaria: (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
-    const user = new User();
+    const user = new Veterinaria();
     user.nombre = nombre;
     user.telefono = telefono;
     user.email = email.toLowerCase();
@@ -24,7 +24,7 @@ const controller = {
     user.habilitado = 1;
     user.eliminado = 0;
 
-    User.findOne({ email: user.email }, (err, issetUser) => {
+    Veterinaria.findOne({ email: user.email }, (err, issetUser) => {
       if (err) {
         return res.status(500).send({
           message: `el usuario ${user.email} esta duplicado`,
@@ -64,7 +64,7 @@ const controller = {
   saveVeterinario: (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
-    const user = new User();
+    const user = new Veterinaria();
     user.nombre = nombre;
     user.telefono = telefono;
     user.email = email.toLowerCase();
@@ -73,7 +73,7 @@ const controller = {
     user.habilitado = 1;
     user.eliminado = 0;
 
-    User.findOne({ email: user.email }, (err, issetUser) => {
+    Veterinaria.findOne({ email: user.email }, (err, issetUser) => {
       if (err) {
         return res.status(500).send({
           message: "ERROR AL COMPROBAR LA DUPLICIDAD DEL USUARIO",
@@ -114,7 +114,7 @@ const controller = {
     const { email, password, getToken } = req.body;
 
     // BUSCAR EL USUARIO QUE COINCIDA CON EL EMAIL
-    User.findOne({ email: email.toLowerCase() }, (err, user) => {
+    Veterinaria.findOne({ email: email.toLowerCase() }, (err, user) => {
       if (err) {
         return res.status(500).send({
           message: "ERROR AL INTENTAR IDENTIFICARSE",
@@ -156,7 +156,7 @@ const controller = {
     const params = req.body;
     const userId = req.user.sub;
     if (req.user.email != params.email) {
-      User.findOne({ email: params.email.toLowerCase() }, (err, user) => {
+      Veterinaria.findOne({ email: params.email.toLowerCase() }, (err, user) => {
         if (err) {
           return res.status(400).send({
             message: "error al intentar identificarse",
@@ -168,7 +168,7 @@ const controller = {
               "ERROR AL CAMBIAR EL EMAIL, YA HAY OTRO USUARIO CON ESE EMAIL",
           });
         } else {
-          User.findByIdAndUpdate(
+          Veterinaria.findByIdAndUpdate(
             { _id: userId },
             params,
             { new: true },

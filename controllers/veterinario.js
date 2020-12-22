@@ -1,13 +1,13 @@
 "use strict";
 
-const User = require("./../models/users");
+const { Veterinaria } = require("./../models/users");
 
 const controller = {
   save: (req, res) => {
     const { nombre, apellido, matricula } = req.body;
     const { sub } = req.user;
     if (req.user.role == "veterinaria") {
-      User.findById(sub).exec((err, user) => {
+      Veterinaria.findById(sub).exec((err, user) => {
         if (err) {
           return res.status(500).send({
             status: "fail",
@@ -34,7 +34,7 @@ const controller = {
               message: "Error en al guardar el veterinario",
             });
           }
-          User.findById(sub)
+          Veterinaria.findById(sub)
             .populate("veterinarios")
             .exec((err, user) => {
               if (err) {
