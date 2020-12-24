@@ -2,11 +2,19 @@ const express = require("express");
 const router = express.Router();
 // const petController = require("../../controllers/pets");
 const cirugiaController = require("../../controllers/cirugia");
-// const { validate_pet } = require("../../middlewares/validateData");
+const { validate_cirugia } = require("../../middlewares/validateData");
 const md_auth = require("../../middlewares/authenticated");
 
-router.post("/new/", md_auth.authenticated, cirugiaController.save);
-// router.post("/new/consulta", md_auth.authenticated, consultaController.save);
+router.post(
+  "/new/",
+  [md_auth.authenticated, validate_cirugia],
+  cirugiaController.save
+);
+router.put(
+  "/update",
+  [md_auth.authenticated, validate_cirugia],
+  cirugiaController.update
+);
 
 // router.get("/", md_auth.authenticated, ownerController.getByVeteId);
 // router.get("/:idPet", md_auth.authenticated, petController.findOne);

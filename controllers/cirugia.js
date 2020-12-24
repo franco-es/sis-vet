@@ -42,5 +42,43 @@ const controller = {
       );
     });
   },
+  update: async (req, res) => {
+    const { idCirugia } = req.query;
+    const { fecha, contenido } = req.body;
+    try {
+      await Cirugia.findByIdAndUpdate(
+        { _id: idCirugia },
+        {
+          $set: {
+            fecha: fecha,
+            contenido: contenido,
+          },
+        },
+        {
+          new: true,
+          upsert: true,
+        },
+        (err, updateConsult) => {
+          Pet.findOneAndUpdate(
+            { "cirugia._id": idConsulta },
+            {
+              $set: {
+                "cirugia.$.fecha": fecha,
+                "cirugia.$.contenido": contenido,
+              },
+            },
+            { new: true, upsert: true },
+            (err, updateResult) => {
+              err
+                ? res.send(err)
+                : res.status(200).send({ resultado: updateResult });
+            }
+          );
+        }
+      );
+    } catch (err) {
+      return console.error(err);
+    }
+  },
 };
 module.exports = controller;

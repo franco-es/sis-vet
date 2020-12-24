@@ -37,5 +37,45 @@ const controller = {
       );
     });
   },
+  update: async (req, res) => {
+    const { idVacuna } = req.query;
+    const { fecha, nombre, prox_aplicacion } = req.body;
+    try {
+      await Vacuna.findByIdAndUpdate(
+        { _id: idVacuna },
+        {
+          $set: {
+            fecha: fecha,
+            nombre: nombre,
+            prox_aplicacion: prox_aplicacion,
+          },
+        },
+        {
+          new: true,
+          upsert: true,
+        },
+        (err, updateConsult) => {
+          Pet.findOneAndUpdate(
+            { "vacunas._id": idConsulta },
+            {
+              $set: {
+                "vacunas.$.fecha": fecha,
+                "vacunas.$.nombre": nombre,
+                "vacunas.$.prox_aplicacion": prox_aplicacion,
+              },
+            },
+            { new: true, upsert: true },
+            (err, updateResult) => {
+              err
+                ? res.send(err)
+                : res.status(200).send({ resultado: updateResult });
+            }
+          );
+        }
+      );
+    } catch (err) {
+      return console.error(err);
+    }
+  },
 };
 module.exports = controller;

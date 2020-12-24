@@ -2,6 +2,7 @@
 
 const validator = require("validator");
 
+
 const create = (req, res, next) => {
   const { nombre, telefono, email, password } = req.body;
   try {
@@ -21,7 +22,6 @@ const create = (req, res, next) => {
     });
   }
 };
-
 const login = (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -54,7 +54,6 @@ const update = (req, res, next) => {
     });
   }
 };
-
 const validate_employee = (req, res, next) => {
   const { nombre, apellido, matricula } = req.body;
   try {
@@ -72,7 +71,6 @@ const validate_employee = (req, res, next) => {
     });
   }
 };
-
 const validate_owner = (req, res, next) => {
   const { nombre, apellido, telefono, direccion } = req.body;
   try {
@@ -99,7 +97,6 @@ const validate_owner = (req, res, next) => {
     next();
   }
 };
-
 const validate_pet = (req, res, next) => {
   const { nombre, especie, raza, color, f_nacimiento } = req.body;
   try {
@@ -113,9 +110,10 @@ const validate_pet = (req, res, next) => {
       satus: "FAIL",
       message: "faltan datos por enviar en el validador",
       nombre,
-      apellido,
-      telefono,
-      direccion,
+      especie,
+      raza,
+      color,
+      f_nacimiento,
     });
   }
   if (
@@ -128,7 +126,6 @@ const validate_pet = (req, res, next) => {
     next();
   }
 };
-
 const validate_consult = (req, res, next) => {
   const { fecha, contenido, diagnostico, tratamiento } = req.body;
 
@@ -156,6 +153,44 @@ const validate_consult = (req, res, next) => {
     next();
   }
 };
+const validate_vacuna = (req, res, next) => {
+  const { fecha, nombre, prox_aplicacion } = req.body;
+
+  try {
+    validate_fecha = !validator.isEmpty(fecha);
+    validate_nombre = !validator.isEmpty(nombre);
+    validate_prox_aplicacion = !validator.isEmpty(prox_aplicacion);
+  } catch (error) {
+    res.status(400).send({
+      satus: "FAIL",
+      message: "faltan datos por enviar en el validador",
+      fecha,
+      nombre,
+      prox_aplicacion,
+    });
+  }
+  if (validate_fecha && validate_nombre && validate_prox_aplicacion) {
+    next();
+  }
+};
+const validate_cirugia = (req, res, next) => {
+  const { fecha, contenido } = req.body;
+
+  try {
+    validate_fecha = !validator.isEmpty(fecha);
+    validate_contenido = !validator.isEmpty(contenido);
+  } catch (error) {
+    res.status(400).send({
+      satus: "FAIL",
+      message: "faltan datos por enviar en el validador",
+      fecha,
+      contenido,
+    });
+  }
+  if (validate_fecha && validate_contenido) {
+    next();
+  }
+};
 module.exports = {
   create,
   login,
@@ -164,4 +199,6 @@ module.exports = {
   validate_owner,
   validate_pet,
   validate_consult,
+  validate_vacuna,
+  validate_cirugia,
 };

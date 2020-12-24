@@ -10,7 +10,7 @@ router.post("/new/consulta", md_auth.authenticated, consultaController.save);
 
 // router.get("/", md_auth.authenticated, ownerController.getByVeteId);
 router.get("/single", md_auth.authenticated, petController.findOne);
-router.put("/update/:idPet", md_auth.authenticated, petController.update);
-router.delete("/delete/:idPet", md_auth.authenticated, petController.delete);
+router.put("/update", md_auth.authenticated, petController.update);
+router.delete("/delete", md_auth.authenticated, petController.delete);
 
 module.exports = router;

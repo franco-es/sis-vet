@@ -36,7 +36,7 @@ const controller = {
     });
   },
   update: (req, res) => {
-    const { idPet } = req.params;
+    const { idPet } = req.query;
     const { nombre, especie, raza, color } = req.body;
 
     Owner.findOneAndUpdate(
@@ -72,7 +72,6 @@ const controller = {
     );
   },
   delete: (req, res) => {
-    //NO USAR!! ELIMINA EL USUARIO.
     const { idOwner, idPet } = req.query;
 
     Owner.findById({ _id: idOwner }, (err, duenio) => {

@@ -15,7 +15,6 @@ const pet_routes = require("./routes/mascotas/pets");
 const consulta_routes = require("./routes/mascotas/consulta");
 const cirugia_routes = require("./routes/mascotas/cirugia");
 const vacuna_routes = require("./routes/mascotas/vacuna");
-const test_routes = require("./routes/test");
 
 // MIDDLEWARES
 app.use(bodyParser.json());
@@ -41,6 +40,5 @@ app.use("/api/pet", pet_routes);
 app.use("/api/consulta", consulta_routes);
 app.use("/api/cirugia", cirugia_routes);
 app.use("/api/vacuna", vacuna_routes);
-app.use("/api/test", test_routes);
 
 module.exports = app;
