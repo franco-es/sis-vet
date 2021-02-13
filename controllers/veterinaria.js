@@ -12,7 +12,7 @@ const saltRouds = 10;
 const salt = bcrypt.genSaltSync(saltRouds);
 
 const controller = {
-  saveVeterinaria: (req, res) => {
+  save: (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
     const user = new Veterinaria();
@@ -43,7 +43,7 @@ const controller = {
               });
             }
             if (!userStored) {
-              return res.status(200).send({
+              return res.status(400).send({
                 message:
                   "EL USUARIO NO SE HA GUARDADO EN EL IF DE SI NO HAY USERSTORED",
               });
