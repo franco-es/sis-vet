@@ -20,7 +20,7 @@
     </q-item-section>
   </q-item>
 </template>
-
+ 
 <script>
 export default {
   name: 'EssentialLink',

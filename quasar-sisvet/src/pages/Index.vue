@@ -3,7 +3,7 @@
     <form action="">
       <input v-model="email" type="text">
       <input v-model="password" type="password">
-      <button type="submit" @click="login">Login</button>
+      <button type="submit" @click="login" >Login</button>
     </form>
   </q-page>
 </template>
@@ -29,11 +29,13 @@ export default {
       .then((res) => {
         this.token = res.data.token;
         localStorage.setItem('token', this.token);
-        console.log(this.token);
       })
       .catch((err) => {
         console.log(err)
       })
+    },
+    showToken() {
+      print(this.token);
     }
   }
 }
