@@ -12,7 +12,7 @@ const saltRouds = 10;
 const salt = bcrypt.genSaltSync(saltRouds);
 
 const controller = {
-  saveVeterinaria: (req, res) => {
+  save: (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
     const user = new Veterinaria();
@@ -43,7 +43,7 @@ const controller = {
               });
             }
             if (!userStored) {
-              return res.status(200).send({
+              return res.status(400).send({
                 message:
                   "EL USUARIO NO SE HA GUARDADO EN EL IF DE SI NO HAY USERSTORED",
               });
@@ -132,6 +132,7 @@ const controller = {
           if (getToken) {
             return res.status(200).send({
               token: jwt.createToken(user),
+              user: user,
             });
           } else {
             user.password = undefined;
@@ -156,43 +157,46 @@ const controller = {
     const params = req.body;
     const userId = req.user.sub;
     if (req.user.email != params.email) {
-      Veterinaria.findOne({ email: params.email.toLowerCase() }, (err, user) => {
-        if (err) {
-          return res.status(400).send({
-            message: "error al intentar identificarse",
-          });
-        }
-        if (user && user.email == params.email) {
-          return res.status(400).send({
-            message:
-              "ERROR AL CAMBIAR EL EMAIL, YA HAY OTRO USUARIO CON ESE EMAIL",
-          });
-        } else {
-          Veterinaria.findByIdAndUpdate(
-            { _id: userId },
-            params,
-            { new: true },
-            (err, userUpdated) => {
-              if (err) {
-                return res.status(400).send({
-                  status: "ERROR",
-                  message: "ha ocurrido un error",
+      Veterinaria.findOne(
+        { email: params.email.toLowerCase() },
+        (err, user) => {
+          if (err) {
+            return res.status(400).send({
+              message: "error al intentar identificarse",
+            });
+          }
+          if (user && user.email == params.email) {
+            return res.status(400).send({
+              message:
+                "ERROR AL CAMBIAR EL EMAIL, YA HAY OTRO USUARIO CON ESE EMAIL",
+            });
+          } else {
+            Veterinaria.findByIdAndUpdate(
+              { _id: userId },
+              params,
+              { new: true },
+              (err, userUpdated) => {
+                if (err) {
+                  return res.status(400).send({
+                    status: "ERROR",
+                    message: "ha ocurrido un error",
+                  });
+                }
+                if (!userUpdated) {
+                  return readdirSync.status(400).send({
+                    status: "error",
+                    message: "ha ocurrido un error",
+                  });
+                }
+                return res.status(200).send({
+                  status: "SUCCESS",
+                  user: userUpdated,
                 });
               }
-              if (!userUpdated) {
-                return readdirSync.status(400).send({
-                  status: "error",
-                  message: "ha ocurrido un error",
-                });
-              }
-              return res.status(200).send({
-                status: "SUCCESS",
-                user: userUpdated,
-              });
-            }
-          );
+            );
+          }
         }
-      });
+      );
     }
   },
 };

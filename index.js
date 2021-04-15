@@ -2,19 +2,19 @@
 
 var mongoose = require("mongoose");
 var app = require('./app');
-var port = process.env.PORT || 3999;
+var port = process.env.PORT || 8550;
 
 mongoose.set("useFindAndModify", false);
 mongoose.Promise = global.Promise;
 mongoose
-  .connect(process.env.DB_URI, {
+  .connect("mongodb+srv://root:root2020@sysvetcluster.1tmfn.mongodb.net/SisVet?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
     console.log("la coneccion a mongo se realizo");
     app.listen(port, () => {
-      console.log("El servidor http://localhost:3999 está funcionando !!!");
+      console.log("El servidor http://localhost:8550 está funcionando !!!");
     });
   })
   .catch((e) => console.log(e));
