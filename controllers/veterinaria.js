@@ -61,55 +61,6 @@ const controller = {
       }
     });
   },
-  saveVeterinario: (req, res) => {
-    const { nombre, telefono, email, password } = req.body;
-
-    const user = new Veterinaria();
-    user.nombre = nombre;
-    user.telefono = telefono;
-    user.email = email.toLowerCase();
-    user.role = "veterinario";
-    user.imagen = null;
-    user.habilitado = 1;
-    user.eliminado = 0;
-
-    Veterinaria.findOne({ email: user.email }, (err, issetUser) => {
-      if (err) {
-        return res.status(500).send({
-          message: "ERROR AL COMPROBAR LA DUPLICIDAD DEL USUARIO",
-        });
-      }
-      if (!issetUser) {
-        // SI NO EXISTE
-        // CIFRAR LA CONTRASENIA
-        bcrypt.hash(password, salt, (err, hash) => {
-          user.password = hash;
-
-          user.save((err, userStored) => {
-            if (err) {
-              return res.status(400).send({
-                message: "EL USUARIO NO SE HA GUARDADO.",
-              });
-            }
-            if (!userStored) {
-              return res.status(200).send({
-                message:
-                  "EL USUARIO NO SE HA GUARDADO EN EL IF DE SI NO HAY USERSTORED",
-              });
-            }
-            return res.status(200).send({
-              message: "GENIAL! SE GUARDO EL USUARIO",
-              user: userStored,
-            });
-          }); //CLOSE SAVE
-        }); // CLOASE BCRYPT
-      } else {
-        return res.status(500).send({
-          message: "ERROR EL USUARIO YA ESTA REGISTRADO",
-        });
-      }
-    });
-  },
   login: (req, res) => {
     const { email, password, getToken } = req.body;
 
@@ -132,7 +83,6 @@ const controller = {
           if (getToken) {
             return res.status(200).send({
               token: jwt.createToken(user),
-              user: user,
             });
           } else {
             user.password = undefined;

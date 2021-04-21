@@ -1,12 +1,6 @@
 "use strict";
 
-const {
-  Owner,
-  Cirugia,
-  Vacuna,
-  Pet,
-  Consulta,
-} = require("./../models/owner_pet");
+const Pet = require("./../models/owner_pet");
 
 const controller = {
   save: (req, res) => {
@@ -22,17 +16,6 @@ const controller = {
     });
     mascota.save((err, mascota) => {
       console.log(mascota);
-      Owner.update(
-        { _id: idOwner },
-        {
-          $push: { mascota: mascota },
-        },
-        (err, addpet) => {
-          return res.status(200).send({
-            pet: addpet,
-          });
-        }
-      );
     });
   },
   update: (req, res) => {

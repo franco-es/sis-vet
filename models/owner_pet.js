@@ -11,8 +11,6 @@ const consultaSchema = Schema({
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 });
 
-const Consulta = mongoose.model("consulta", consultaSchema);
-
 const vacunaSchema = Schema({
   nombre: String,
   fecha: String,
@@ -20,15 +18,19 @@ const vacunaSchema = Schema({
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 });
 
-const Vacuna = mongoose.model("vacuna", vacunaSchema);
-
 const cirugiaSchema = Schema({
   fecha: String,
   contenido: String,
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 });
 
-const Cirugia = mongoose.model("cirugia", cirugiaSchema);
+const ownerSchema = Schema({
+  nombre: String,
+  apellido: String,
+  telefono: String,
+  direccion: String,
+  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
+});
 
 const petSchema = Schema({
   nombre: String,
@@ -37,21 +39,13 @@ const petSchema = Schema({
   color: String,
   f_nacimiento: String,
   created: { type: Date, default: Date.now },
+  owner: ownerSchema,
   consultas: [consultaSchema],
   vacunas: [vacunaSchema],
   cirugia: [cirugiaSchema],
+  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 });
 
 const Pet = mongoose.model("mascota", petSchema);
 
-const ownerSchema = Schema({
-  nombre: String,
-  apellido: String,
-  telefono: String,
-  direccion: String,
-  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
-  mascota: [petSchema],
-});
-const Owner = mongoose.model("owner", ownerSchema);
-
-module.exports = { Owner, Cirugia, Vacuna, Pet, Consulta };
+module.exports = { Pet };
