@@ -46,6 +46,6 @@ const petSchema = Schema({
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 });
 
-const Pet = mongoose.model("mascota", petSchema);
+const Pet = mongoose.model("Pet", petSchema);
 
 module.exports = { Pet };

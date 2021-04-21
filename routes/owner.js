@@ -9,8 +9,8 @@ router.post(
   [md_auth.authenticated, validate_owner],
   ownerController.save
 );
-router.get("/", md_auth.authenticated, ownerController.getByVeteId);
-router.get("/:id", md_auth.authenticated, ownerController.getOwner);
-router.put("/update/:id", md_auth.authenticated, ownerController.getOwner);
+// router.get("/", md_auth.authenticated, ownerController.getByVeteId);
+// router.get("/:id", md_auth.authenticated, ownerController.getOwner);
+// router.put("/update/:id", md_auth.authenticated, ownerController.getOwner);
 
 module.exports = router;

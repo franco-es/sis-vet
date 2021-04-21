@@ -1,56 +1,56 @@
 "use strict";
 
-const Pet = require("./../models/owner_pet");
+const { Pet } = require("./../models/owner_pet");
 
 const controller = {
-  save: (req, res) => {
-    const { idOwner } = req.query;
+  save: async (req, res) => {
+    const { sub } = req.user;
     const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
-    const mascota = new Pet({
+    const mascota = await new Pet({
       nombre: nombre,
       especie: especie,
       raza: raza,
       color: color,
+      owner: 1,
       f_nacimineto: f_nacimiento,
+      vete: sub,
     });
     mascota.save((err, mascota) => {
-      console.log(mascota);
+      err
+        ? res.status(400).send(err)
+        : res.status(200).send({
+            status: "200",
+            message: "success",
+            mascota: mascota,
+          });
     });
   },
   update: (req, res) => {
     const { idPet } = req.query;
     const { nombre, especie, raza, color } = req.body;
 
-    Owner.findOneAndUpdate(
-      { "mascota._id": idPet },
+    Pet.findByIdAndUpdate(
+      idPet,
       {
         $set: {
-          "mascota.$.nombre": nombre,
-          "mascota.$.especie": especie,
-          "mascota.$.raza": raza,
-          "mascota.$.color": color,
+          nombre: nombre,
+          especie: especie,
+          raza: raza,
+          color: color,
         },
       },
       { new: true },
-      (err, petUpdated) => {
-        if (err) {
-          return res.status(500).send({
-            status: "error",
-            message: "Error en la petición",
-          });
-        }
-
-        if (!petUpdated) {
-          return res.status(404).send({
-            status: "error",
-            message: "No existe el perro / gato/ etc",
-          });
-        }
-        return res.status(200).send({
-          status: "success",
-          mascota: petUpdated,
-        });
+      (err, result) => {
+        !result
+          ? res.status(400).send({ message: "no hay mascota" })
+          : err
+          ? res.status(400).send({ message: "no existe la mascota" })
+          : res.status(200).send({
+              status: "200",
+              message: "success",
+              pet: result,
+            });
       }
     );
   },
@@ -82,17 +82,36 @@ const controller = {
     });
   },
   findOne: (req, res) => {
+    // const { sub } = req.user;
     const { idPet } = req.query;
 
-    Pet.findOne({ _id: idPet })
-      .populate("Consultas")
-      .populate("Cirugia")
-      .populate("Vacuna")
-      .exec((e, result) => {
-        return res.send({
-          result,
-        });
-      });
+    Pet.findById(idPet, (err, result) => {
+      !result
+        ? res.status(400).send({ message: "no hay mascota" })
+        : err
+        ? res.status(400).send({ message: "no existe la mascota" })
+        : res.status(200).send({
+            status: "200",
+            message: "success",
+            pet: result,
+          });
+    });
+  },
+  findAll: (req, res) => {
+    const { sub } = req.user;
+    Pet.find({ vete: sub }, (err, result) => {
+      !result
+        ? res.status(400).send({ message: "no hay resultado" })
+        : err
+        ? res
+            .status(400)
+            .send({ message: "no existen mascotas para este usuaio" })
+        : res.status(200).send({
+            status: "200",
+            message: "success",
+            pet: result,
+          });
+    });
   },
 };
 
