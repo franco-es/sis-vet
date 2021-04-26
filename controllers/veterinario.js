@@ -6,62 +6,93 @@ const controller = {
   save: (req, res) => {
     const { nombre, apellido, matricula } = req.body;
     const { sub } = req.user;
-    if (req.user.role == "veterinaria") {
-      Veterinaria.findById(sub).exec((err, user) => {
-        if (err) {
-          return res.status(500).send({
-            status: "fail",
-            message: "error en la peticion",
-          });
-        }
-        if (!user) {
-          return res.status(500).send({
-            status: "fail",
-            message: "no hay usuario registrado bajo ese id",
-          });
-        }
-        const veterinario = {
-          nombre: nombre,
-          apellido: apellido,
-          matricula: matricula,
-          imagen: null,
-        };
-        user.veterinarios.push(veterinario);
-        user.save((err) => {
-          if (err) {
-            return res.status(500).send({
+    Veterinaria.findById(sub, (err, result) => {
+      result.veterinarios.push({
+        nombre: nombre,
+        apellido: apellido,
+        matricula: matricula,
+        imagen: "test.png",
+      });
+      result.save();
+      res.status(200).send({
+        status: "success",
+        message: "empleado agregado",
+        empleado: result,
+      });
+    });
+  },
+  getVets: (req, res) => {
+    const { sub } = req.user;
+    Veterinaria.findById(sub, (err, result) => {
+      res.status(200).send({
+        status: "success",
+        message: "empleados encontrados",
+        empleados: result.veterinarios,
+      });
+    });
+  },
+  update: (req, res) => {
+    const { sub } = req.user;
+    const { employeeId } = req.query;
+    const { nombre, apellido, matricula } = req.body;
+    Veterinaria.updateOne(
+      { _id: sub, "veterinarios._id": employeeId },
+      {
+        $set: {
+          "veterinarios.$.nombre": nombre,
+          "veterinarios.$.apellido": apellido,
+          "veterinarios.$.matricula": matricula,
+        },
+      },
+      (err, result) => {
+        !result
+          ? res.status(400).send({
               status: "error",
-              message: "Error en al guardar el veterinario",
+              message: "ocurrio un error en la query",
+            })
+          : err
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+              error: err,
+            })
+          : res.status(200).send({
+              status: "success",
+              message: "empleado modificado",
+              empleado: result,
             });
-          }
-          Veterinaria.findById(sub)
-            .populate("veterinarios")
-            .exec((err, user) => {
-              if (err) {
-                return res.status(500).send({
-                  status: "error",
-                  message: "error en la peticion",
-                });
-              }
-              if (!user) {
-                return res.status(500).send({
-                  status: "error",
-                  message: "error en la peticion",
-                });
-              }
-              return res.status(200).send({
-                status: "success",
-                user,
-              });
+      }
+    );
+  },
+  delete: (req, res) => {
+    const { sub } = req.user;
+    const { employeeId } = req.query;
+    Veterinaria.updateOne(
+      { _id: sub },
+      {
+        $pull: {
+          veterinarios: { _id: employeeId },
+        },
+      },
+      (err, result) => {
+        !result
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+            })
+          : err
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+              error: err,
+            })
+          : res.status(200).send({
+              status: "success",
+              message: "empleado eliminado",
+              empleado: result,
             });
-        });
-      });
-    } else {
-      return res.status(403).send({
-        status: "fail",
-        message: "no sos una veterinaria, sos unico usuario",
-      });
-    }
+      }
+    );
   },
 };
 

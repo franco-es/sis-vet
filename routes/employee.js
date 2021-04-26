@@ -9,6 +9,13 @@ router.post(
   [md_auth.authenticated, validate_employee],
   employeeController.save
 );
+router.get("/get", [md_auth.authenticated], employeeController.getVets);
+router.put(
+  "/update",
+  [md_auth.authenticated, validate_employee],
+  employeeController.update
+);
+router.post("/remove", md_auth.authenticated, employeeController.delete);
 // router.delete('/delete/:id', userController.deleteVet);
 // router.get('/admin/all', userController.getAll);
 

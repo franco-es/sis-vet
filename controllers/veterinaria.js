@@ -1,6 +1,5 @@
 "use strict";
 
-const validator = require("validator");
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const path = require("path");

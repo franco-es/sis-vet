@@ -17,9 +17,11 @@ router.put(
   consultaController.update
 );
 
-// router.get("/", md_auth.authenticated, ownerController.getByVeteId);
-// router.get("/:idPet", md_auth.authenticated, petController.findOne);
-// router.put("/update/:idPet", md_auth.authenticated, petController.update);
-// router.delete("/delete/:idPet", md_auth.authenticated, petController.delete);
+router.get(
+  "/getConsultas",
+  md_auth.authenticated,
+  consultaController.getConsultas
+);
+router.delete("/delete", md_auth.authenticated, consultaController.delete);
 
 module.exports = router;

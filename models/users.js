@@ -10,8 +10,6 @@ var veteSChema = Schema({
   imagen: String,
 });
 
-const vete = mongoose.model("veterinario", veteSChema);
-
 var userSchema = Schema({
   nombre: String,
   telefono: String,
@@ -24,11 +22,9 @@ var userSchema = Schema({
   veterinarios: [veteSChema],
 });
 
+const Veterinaria = mongoose.model("Veterinaria", userSchema);
 
-
-const Veterinaria =  mongoose.model("veterinaria", userSchema);
-
-module.exports = {vete, Veterinaria}
+module.exports = { Veterinaria };
 // userSchema.methods.toJSON = () => {
 //   const obj = this.toObjct();
 //   delete obj.password;
