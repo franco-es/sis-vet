@@ -10,9 +10,12 @@ router.post(
   [md_auth.authenticated, validate_vacuna],
   vacunaController.save
 );
-router.put(
-  "/update",
-  [md_auth.authenticated, validate_vacuna],
-  vacunaController.update
+router.put("/update", md_auth.authenticated, vacunaController.update);
+
+router.get(
+  "/getvacunas",
+  md_auth.authenticated,
+  vacunaController.getvacunas
 );
+router.delete("/delete", md_auth.authenticated, vacunaController.delete);
 module.exports = router;

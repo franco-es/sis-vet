@@ -1,81 +1,98 @@
 "use strict";
 
-const { Vacuna, Pet } = require("./../models/owner_pet");
+const { Pet } = require("./../models/owner_pet");
 // const petController = require("./pets");
 
 const controller = {
   save: async (req, res) => {
     const { idPet } = req.query;
-    const { sub } = req.user;
-    const { fecha, nombre, prox_aplicacion } = req.body;
-    const vacuna = new Vacuna({
-      nombre: nombre,
-      fecha: fecha,
-      prox_aplicacion: prox_aplicacion,
-      vete: sub,
-    });
-    console.log(vacuna);
-    await vacuna.save((err, result) => {
-      console.log(result);
-      Pet.updateOne(
-        { _id: idPet },
-        {
-          $push: { vacunas: result },
-        },
-        (e, petupdated) => {
-          console.log(petupdated);
-          Pet.findOne({ _id: idPet })
-            .populate("Consultas")
-            .populate("Cirugia")
-            .populate("Vacuna")
-            .exec((e, result) => {
-              return res.send({
-                result,
-              });
-            });
-        }
-      );
+    const { fecha, prox_aplicacion } = req.body;
+
+    Pet.findById(idPet, (err, result) => {
+      try {
+        result.vacunas.push({
+          fecha: fecha,
+          prox_aplicacion: prox_aplicacion,
+        });
+        result.save();
+        res.status(200).send({
+          status: "success",
+          message: "consulta agregada",
+          Vacuna: result,
+        });
+      } catch (err) {
+        res.status(400).send({ message: "ocurrio un error", error: err });
+      }
     });
   },
   update: async (req, res) => {
-    const { idVacuna } = req.query;
-    const { fecha, nombre, prox_aplicacion } = req.body;
-    try {
-      await Vacuna.findByIdAndUpdate(
-        { _id: idVacuna },
-        {
-          $set: {
-            fecha: fecha,
-            nombre: nombre,
-            prox_aplicacion: prox_aplicacion,
-          },
+    const { idPet, idConsulta } = req.query;
+    const { fecha, prox_aplicacion } = req.body;
+    Pet.updateOne(
+      { _id: idPet, "vacunas._id": idConsulta },
+      {
+        $set: {
+          "vacunas.$.fecha": fecha,
+          "vacunas.$.prox_aplicacion": prox_aplicacion,
         },
-        {
-          new: true,
-          upsert: true,
+      },
+      (err, result) => {
+        !result
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+            })
+          : err
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+              error: err,
+            })
+          : res.status(200).send({
+              status: "success",
+              message: "consulta modificado",
+              Vacuna: result,
+            });
+      }
+    );
+  },
+  getvacunas: (req, res) => {
+    const { idPet } = req.query;
+    Pet.findById(idPet, (err, result) => {
+      res.status(200).send({
+        status: "success",
+        resultado: result.vacunas,
+      });
+    });
+  },
+  delete: async (req, res) => {
+    const { idPet, idConsulta } = req.query;
+    Pet.updateOne(
+      { _id: idPet },
+      {
+        $pull: {
+          vacunas: { _id: idConsulta },
         },
-        (err, updateConsult) => {
-          Pet.findOneAndUpdate(
-            { "vacunas._id": idConsulta },
-            {
-              $set: {
-                "vacunas.$.fecha": fecha,
-                "vacunas.$.nombre": nombre,
-                "vacunas.$.prox_aplicacion": prox_aplicacion,
-              },
-            },
-            { new: true, upsert: true },
-            (err, updateResult) => {
-              err
-                ? res.send(err)
-                : res.status(200).send({ resultado: updateResult });
-            }
-          );
-        }
-      );
-    } catch (err) {
-      return console.error(err);
-    }
+      },
+      (err, result) => {
+        !result
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+            })
+          : err
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+              error: err,
+            })
+          : res.status(200).send({
+              status: "success",
+              message: "Vacuna eliminado",
+              Vacuna: result,
+            });
+      }
+    );
   },
 };
 module.exports = controller;
