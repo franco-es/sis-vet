@@ -7,7 +7,7 @@ const md_auth = require("../../middlewares/authenticated");
 
 router.post(
   "/new/",
-  [md_auth.authenticated, vaclidate_cirugia],
+  [md_auth.authenticated, validate_cirugia],
   cirugiaController.save
 );
 router.put("/update", md_auth.authenticated, cirugiaController.update);

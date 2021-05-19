@@ -2,7 +2,6 @@
 
 const validator = require("validator");
 
-
 const create = (req, res, next) => {
   const { nombre, telefono, email, password } = req.body;
   try {

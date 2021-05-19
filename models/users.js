@@ -6,14 +6,17 @@ const Schema = mongoose.Schema;
 var veteSChema = Schema({
   nombre: String,
   apellido: String,
-  matricula: String,
+  matricula: { type: String, Unique: true },
   imagen: String,
 });
 
 var userSchema = Schema({
   nombre: String,
   telefono: String,
-  email: String,
+  email: {
+    type: String,
+    Unique: true,
+  },
   password: String,
   role: String,
   imagen: String,
