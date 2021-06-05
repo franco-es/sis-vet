@@ -12,6 +12,7 @@ router.put(
   [md_auth.authenticated, update, checkEmailUpdate],
   userController.update
 );
+router.post("/uploadAvatar", md_auth.authenticated, userController.uploadImage);
 // router.delete('/delete/:id', userController.deleteVet);
 // router.get('/admin/all', userController.getAll);
 

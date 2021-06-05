@@ -6,6 +6,7 @@ const path = require("path");
 const { Veterinaria } = require("./../models/users");
 const jwt = require("../services/jwt");
 const registerEmail = require("../services/send");
+const FileSystem = require("../services/uploadImage");
 // const { default: validator } = require("validator");
 
 const saltRouds = 10;
@@ -51,13 +52,14 @@ const controller = {
           check
             ? getToken
               ? res.status(200).send({
-                  token: jwt.createToken(user),
+                token: jwt.createToken(user),
+                user: user
                 })
               : res.status(500).send({
                   status: "error",
                   message: "No mando getToken",
                 })
-            : res.status(200).send({
+            : res.status(400).send({
                 status: "DENIED",
                 message: "LAS CREDENCIALES NO SON CORRECTAS",
               });
@@ -93,6 +95,24 @@ const controller = {
             });
       }
     );
+  },
+  uploadImage: (req, res) => {
+    const fileSystem = new FileSystem();
+    const image = req.files.img;
+    if (!image) {
+      return res.status(400).send({
+        estado: "error",
+        message: "no se envio una imagen",
+      });
+    }
+    const validateImagenType = image.mimetype.inlcudes("image");
+    if (!validateImagenType) {
+      return res.status(400).send({
+        status: "error",
+        message: "el archivo no es una imagen",
+      });
+    }
+    // const saveFile = yield;
   },
 };
 
