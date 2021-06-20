@@ -12,7 +12,7 @@ router.post(
 );
 router.put("/update", md_auth.authenticated, cirugiaController.update);
 
-router.get("/ getcirugia", md_auth.authenticated, cirugiaController.getcirugia);
+router.get("/getcirugia", md_auth.authenticated, cirugiaController.getcirugia);
 router.delete("/delete", md_auth.authenticated, cirugiaController.delete);
 
 module.exports = router;
