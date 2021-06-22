@@ -20,7 +20,7 @@ const controller = {
         res.status(200).send({
           status: "success",
           message: "consulta agregada",
-          empleado: result,
+          consultas: result,
         });
       } catch (err) {
         res.status(400).send({ message: "ocurrio un error", error: err });
