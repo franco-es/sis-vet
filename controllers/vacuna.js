@@ -67,12 +67,12 @@ const controller = {
     });
   },
   delete: async (req, res) => {
-    const { idPet, idConsulta } = req.query;
+    const { idPet, idVacuna } = req.query;
     Pet.updateOne(
       { _id: idPet },
       {
         $pull: {
-          vacunas: { _id: idConsulta },
+          vacunas: { _id: idVacuna },
         },
       },
       (err, result) => {

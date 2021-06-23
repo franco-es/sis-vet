@@ -92,7 +92,7 @@ const controller = {
             })
           : res.status(200).send({
               status: "success",
-              message: "empleado eliminado",
+              message: "consulta eliminada",
               empleado: result,
             });
       }
