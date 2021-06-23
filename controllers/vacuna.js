@@ -6,12 +6,13 @@ const { Pet } = require("./../models/owner_pet");
 const controller = {
   save: async (req, res) => {
     const { idPet } = req.query;
-    const { fecha, prox_aplicacion } = req.body;
+    const { fecha, prox_aplicacion, vacuna } = req.body;
 
     Pet.findById(idPet, (err, result) => {
       try {
         result.vacunas.push({
           fecha: fecha,
+          nombre: vacuna,
           prox_aplicacion: prox_aplicacion,
         });
         result.save();
