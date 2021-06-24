@@ -12,8 +12,7 @@ const controller = {
       especie: especie,
       raza: raza,
       color: color,
-      // owner: "1",
-      f_nacimineto: f_nacimiento,
+      f_nacimiento: f_nacimiento,
       vete: sub,
     });
     mascota.save((err, mascota) => {

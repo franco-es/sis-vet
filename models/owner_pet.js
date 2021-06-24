@@ -37,7 +37,7 @@ const petSchema = Schema({
   especie: String,
   raza: String,
   color: String,
-  f_nacimiento: String,
+  f_nacimiento: Date,
   created: { type: Date, default: Date.now },
   owner: ownerSchema,
   consultas: [consultaSchema],
