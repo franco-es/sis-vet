@@ -44,7 +44,7 @@ const controller = {
         : res.status(200).send({
             status: "200",
             message: "success",
-            owner: owner.owner,
+            owner: owner,
           });
     });
   },
