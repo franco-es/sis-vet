@@ -1,8 +1,8 @@
 
-statics/*
+statics/
 
 # dependencies
-/node_modules
+node_modules/
 node_modules/.bin/is-ci
 node_modules/.bin/is-ci.cmd
 node_modules/.bin/is-ci.ps1
