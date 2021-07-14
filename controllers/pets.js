@@ -1,6 +1,7 @@
 "use strict";
 
 const { Pet } = require("./../models/owner_pet");
+const FileSystem = require("../services/uploadImage");
 
 const controller = {
   save: async (req, res) => {
@@ -111,6 +112,37 @@ const controller = {
             pet: result,
           });
     });
+  },
+  uploadRayX: (req, res) => {
+    const { idPet, idConsulta } = req.query;
+    console.log(req.file);
+    Pet.updateOne(
+      { _id: idPet, "consultas._id": idConsulta },
+      {
+        $set: {
+          "consultas.$.photo": req.file.filename,
+        },
+      },
+      { multi: true },
+      (err, result) => {
+        !result
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+            })
+          : err
+          ? res.status(400).send({
+              status: "error",
+              message: "ocurrio un error en la query",
+              error: err,
+            })
+          : res.status(200).send({
+              status: "success",
+              message: "consulta modificado",
+              empleado: result,
+            });
+      }
+    );
   },
 };
 

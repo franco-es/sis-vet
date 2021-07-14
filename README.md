@@ -4,7 +4,7 @@ _Bienvenidos a nuestro sistema de gestion de veterinarias._
 
 ## Comenzando 🚀
 
-_Este proyecto frupal forma parte del proyecto final de la Diplomatura en Programacion Web de la UTN. pero a parte de eso, es una idea para ayudar a la comunidad de veterinarios de diferentes provincias que puedan llevar a cabo sus consultas y demas tareas de una forma mas organizada y agil. el proyecto aun esta en face de desarrollo, faltan modulos por integrar, como el envio de mails, la subida de archivos como pdf y imagenes. ademas de realizar las historias clinicas y demas. de a poco se iran construyendo y se ira actualiando el proyecto dia a dia._
+_Este proyecto es una idea para ayudar a la comunidad de veterinarios de diferentes provincias que puedan llevar a cabo sus consultas y demas tareas de una forma mas organizada y agil. el proyecto aun esta en face de desarrollo, faltan modulos por integrar, como el envio de mails, la subida de archivos como pdf y imagenes. ademas de realizar las historias clinicas y demas. de a poco se iran construyendo y se ira actualiando el proyecto dia a dia._
 
 
 ### Pre-requisitos 📋

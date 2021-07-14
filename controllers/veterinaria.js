@@ -52,8 +52,8 @@ const controller = {
           check
             ? getToken
               ? res.status(200).send({
-                token: jwt.createToken(user),
-                user: user
+                  token: jwt.createToken(user),
+                  user: user,
                 })
               : res.status(500).send({
                   status: "error",
@@ -98,7 +98,7 @@ const controller = {
   },
   uploadImage: (req, res) => {
     const fileSystem = new FileSystem();
-    const image = req.files.img;
+    const image = req.file.img;
     if (!image) {
       return res.status(400).send({
         estado: "error",
@@ -112,7 +112,12 @@ const controller = {
         message: "el archivo no es una imagen",
       });
     }
-    // const saveFile = yield;
+    const saveFile = fileSystem.guardarImagenTemp(req.sub, image);
+    res.status(200).json({
+      estado: "success",
+      imagen: imagen,
+      guardarArchivo: saveFile,
+    });
   },
 };
 

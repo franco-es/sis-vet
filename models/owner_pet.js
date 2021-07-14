@@ -8,6 +8,7 @@ const consultaSchema = Schema({
   contenido: String,
   diagnostico: String,
   tratamiento: String,
+  photo: String,
   vete: { type: Schema.ObjectId, ref: "Veterinaria" },
 });
 
@@ -38,6 +39,7 @@ const petSchema = Schema({
   raza: String,
   color: String,
   f_nacimiento: Date,
+  photo: String,
   created: { type: Date, default: Date.now },
   owner: ownerSchema,
   consultas: [consultaSchema],
