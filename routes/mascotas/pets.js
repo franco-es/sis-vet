@@ -20,5 +20,6 @@ router.post(
   [md_auth.authenticated, uploadSingle],
   petController.uploadRayX
 );
+router.get("/getRay", md_auth.authenticated, petController.getRay);
 
 module.exports = router;

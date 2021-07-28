@@ -2,6 +2,8 @@
 
 const { Pet } = require("./../models/owner_pet");
 const FileSystem = require("../services/uploadImage");
+const fs = require("fs");
+const path = require("path");
 
 const controller = {
   save: async (req, res) => {
@@ -28,7 +30,7 @@ const controller = {
   },
   update: (req, res) => {
     const { idPet } = req.query;
-    const { nombre, especie, raza, color } = req.body;
+    const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
     Pet.findByIdAndUpdate(
       idPet,
@@ -38,9 +40,10 @@ const controller = {
           especie: especie,
           raza: raza,
           color: color,
+          f_nacimiento: f_nacimiento,
         },
       },
-      { new: true },
+      { multi: true },
       (err, result) => {
         !result
           ? res.status(400).send({ message: "no hay mascota" })
@@ -139,10 +142,26 @@ const controller = {
           : res.status(200).send({
               status: "success",
               message: "consulta modificado",
-              empleado: result,
+              Imagen: req.file.filename,
             });
       }
     );
+  },
+  getRay: (req, res) => {
+    const { sub } = req.user;
+    const { idPet, idConsulta, img } = req.query;
+    const pathImg = `../statics/${sub}/${idPet}/${idConsulta}/${img}`;
+    const absolutePath = path.join(__dirname, pathImg);
+    console.log(absolutePath);
+    fs.access(absolutePath, fs.F_OK, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      //file exists
+      res.sendFile(path.join(__dirname, pathImg));
+    });
   },
 };
 
