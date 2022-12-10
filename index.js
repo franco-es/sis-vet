@@ -2,19 +2,20 @@
 
 var mongoose = require("mongoose");
 var app = require('./app');
+var log = require('npmlog');
 var port = process.env.PORT || 8550;
 
 mongoose.set("useFindAndModify", false);
 mongoose.Promise = global.Promise;
 mongoose
-  .connect("mongodb+srv://root:root2020@sysvetcluster.1tmfn.mongodb.net/SisVet?retryWrites=true&w=majority", {
+  .connect("mongodb://127.0.0.1:27017/SisVet", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("la coneccion a mongo se realizo");
+    log.info("la coneccion a mongo se realizo");
     app.listen(port, () => {
-      console.log("El servidor http://localhost:8550 está funcionando !!!");
+      log.info("El servidor http://localhost:8550 está funcionando !!!");
     });
   })
   .catch((e) => console.log(e));
