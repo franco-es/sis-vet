@@ -3,7 +3,7 @@
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
-const { Veterinaria } = require("./../models/users");
+const { Vete, User } = require("./../models/users");
 const jwt = require("../services/jwt");
 const registerEmail = require("../services/send");
 const FileSystem = require("../services/uploadImage");
@@ -16,29 +16,27 @@ const controller = {
   save: (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
-    const user = new Veterinaria();
-    user.nombre = nombre;
-    user.telefono = telefono;
+    const user = {};
+    user.name = nombre;
+    user.phone = telefono;
     user.email = email.toLowerCase();
     user.role = "veterinaria";
-    user.imagen = null;
-    user.habilitado = 1;
-    user.eliminado = 0;
+    user.img_url = null;
+    user.active = 1;
+    user.deleted = 0;
 
     bcrypt.hash(password, salt, (err, hash) => {
-      user.password = hash;
+      user.pass = hash;
       try {
-        user.save((err, userStored) => {
-          let name = userStored.nombre;
-          let email = userStored.email;
-          let send = registerEmail.registerEmail(email, name);
-          return res.status(200).send({
-            message: "GENIAL! SE GUARDO EL USUARIO",
-            user: userStored,
-          });
-        });
+        User.create(user)
+          .then((data)=>{
+            res.status(200).send({
+              message: "GENIAL! SE GUARDO EL USUARIO",
+              user: data,
+            });
+          })
       } catch (err) {
-        return res.status(400).send({ error: err });
+        res.status(400).send({ error: err });
       }
     });
   },
@@ -46,30 +44,31 @@ const controller = {
     const { email, password, getToken } = req.body;
     const Email = email.toLowerCase();
     // BUSCAR EL USUARIO QUE COINCIDA CON EL EMAIL
-    Veterinaria.findOne({ email: Email }, (err, user) => {
-      try {
-        bcrypt.compare(password, user.password, (err, check) => {
-          check
-            ? getToken
-              ? res.status(200).send({
-                  token: jwt.createToken(user),
-                  user: user,
-                })
-              : res.status(500).send({
-                  status: "error",
-                  message: "No mando getToken",
-                })
-            : res.status(400).send({
-                status: "DENIED",
-                message: "LAS CREDENCIALES NO SON CORRECTAS",
-              });
-        });
-      } catch (err) {
-        return res.status(400).send({
-          error: err,
-        });
-      }
-    });
+    try {
+      User.findOne({where:{email: email}})
+        .then((data) =>{
+          data == null ? res.status(500).json({message: "user not Found"}) : 
+            bcrypt.compare(password, data.pass, (err, check) => {
+              check ? 
+                getToken ? 
+                res.status(200).send({
+                  token: jwt.createToken(data),
+                  user: data,
+                }) : res.status(500).send({
+                      status: "error",
+                      message: "No mando getToken",
+                    })
+                : res.status(400).send({
+                      status: "DENIED",
+                      message: "LAS CREDENCIALES NO SON CORRECTAS",
+                  });
+            })
+        });   
+    } catch (err) {
+      res.status(400).send({
+        error: err,
+      });
+    }
   },
   update: async (req, res) => {
     const { email, nombre, telefono } = req.body;

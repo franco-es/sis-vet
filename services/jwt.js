@@ -6,10 +6,10 @@ var moment = require("moment");
 exports.createToken = (user) => {
   var payload = {
     sub: user._id,
-    nombre: user.nombre,
+    nombre: user.name,
     email: user.email,
     role: user.role,
-    image: user.image,
+    image: user.img_url,
     iat: moment().unix(),
     exp: moment().add(30, "days").unix,
   };
