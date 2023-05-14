@@ -12,14 +12,16 @@ const FileSystem = require("../services/uploadImage");
 const saltRouds = 10;
 const salt = bcrypt.genSaltSync(saltRouds);
 
-const controller = {
-  save: (req, res) => {
+class VeteController {
+  constructor() {}
+
+  save(req, res) {
     const { nombre, telefono, email, password } = req.body;
 
     const user = {};
     user.name = nombre;
     user.phone = telefono;
-    user.email = email.toLowerCase();
+    user.email = email;
     user.role = "veterinaria";
     user.img_url = null;
     user.active = 1;
@@ -28,74 +30,82 @@ const controller = {
     bcrypt.hash(password, salt, (err, hash) => {
       user.pass = hash;
       try {
-        User.create(user)
-          .then((data)=>{
-            res.status(200).send({
-              message: "GENIAL! SE GUARDO EL USUARIO",
-              user: data,
-            });
-          })
+        User.create(user).then((data) => {
+          res.status(200).send({
+            message: "GENIAL! SE GUARDO EL USUARIO",
+            user: data,
+          });
+        });
       } catch (err) {
         res.status(400).send({ error: err });
       }
     });
-  },
-  login: (req, res) => {
+  }
+
+  login(req, res) {
     const { email, password, getToken } = req.body;
     const Email = email.toLowerCase();
     // BUSCAR EL USUARIO QUE COINCIDA CON EL EMAIL
     try {
-      User.findOne({where:{email: email}})
-        .then((data) =>{
-          data == null ? res.status(500).json({message: "user not Found"}) : 
-            bcrypt.compare(password, data.pass, (err, check) => {
-              check ? 
-                getToken ? 
-                res.status(200).send({
-                  token: jwt.createToken(data),
-                  user: data,
-                }) : res.status(500).send({
+      User.findOne({ where: { email: email } }).then((data) => {
+        data == null
+          ? res.status(500).json({ message: "user not Found" })
+          : bcrypt.compare(password, data.pass, (err, check) => {
+              check
+                ? getToken
+                  ? res
+                      .status(200)
+                      .cookie('token', jwt.createToken(data), { maxAge: 900000, httpOnly: true })
+                      .send({
+                        user: data,
+                      })
+                  : (
+                    res.status(500).send({
                       status: "error",
                       message: "No mando getToken",
                     })
+                    )
                 : res.status(400).send({
-                      status: "DENIED",
-                      message: "LAS CREDENCIALES NO SON CORRECTAS",
+                    status: "DENIED",
+                    message: "LAS CREDENCIALES NO SON CORRECTAS",
                   });
-            })
-        });   
+            });
+      });
     } catch (err) {
       res.status(400).send({
         error: err,
       });
     }
-  },
-  update: async (req, res) => {
+  }
+  update(req, res) {
     const { email, nombre, telefono } = req.body;
     const { sub } = req.user;
-    const Email = email.toLowerCase();
-    Veterinaria.findByIdAndUpdate(
-      sub,
+    User.update(
       {
-        nombre: nombre,
-        telefono: telefono,
+        name: nombre,
+        phone: telefono,
         email: email,
       },
-      { new: true },
-      (err, user) => {
-        err
-          ? res.status(404).send({
-              message: err,
-            })
-          : res.status(200).send({
-              message: "user updated",
-              user: user,
-              message2: "please log in again.",
-            });
+      {
+        where: {
+          id: sub,
+        },
       }
-    );
-  },
-  uploadImage: (req, res) => {
+    ).then((data) => {
+      if (data == null) {
+        res.status(404).send({
+          message: err,
+        });
+      } else {
+        res.status(200).send({
+          message: "user updated",
+          user: user,
+          message2: "please log in again.",
+        });
+      }
+    });
+  }
+  uploadImage(req, res) {
     const fileSystem = new FileSystem();
     const image = req.file.img;
     if (!image) {
@@ -117,7 +127,7 @@ const controller = {
       imagen: imagen,
       guardarArchivo: saveFile,
     });
-  },
-};
+  }
+}
 
-module.exports = controller;
+module.exports = { VeteController };
