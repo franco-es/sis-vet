@@ -37,7 +37,7 @@ class VeteController {
       User.findOne({ where: { email: email } }).then((data) => {
         data == null
           ? res.status(500).json({ message: "user not Found" })
-          : compare(password, data.pass, (err, check) => {
+          : compare(password, data.pass, (_, check) => {
               check
                 ? getToken
                   ? res
