@@ -1,6 +1,5 @@
 "use strict";
-
-const { Pet } = require("../models/owner_pet").default;
+import { Pet } from "../models/owner_pet.js";
 
 
 class OwnerController{
