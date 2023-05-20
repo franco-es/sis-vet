@@ -6,7 +6,7 @@ import path from "path";
 import { Vete, User } from "./../models/users.js";
 import { createToken } from "../services/jwt.js";
 import registerEmail from "../services/send.js";
-import FileSystem from "../services/uploadImage.js";
+import {FileSystem} from "../services/uploadImage.js";
 import { UserService } from "../services/userService.js";
 // const { default: validator } = require("validator");
 

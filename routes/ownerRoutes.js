@@ -7,13 +7,13 @@ import { authenticated } from "../middlewares/authenticated.js";
 ownerRouter.post(
   "/new",
   [authenticated, validate_owner],
-  new OwnerController.save
+  new OwnerController().save
 );
 ownerRouter.put(
   "/update",
   [authenticated, validate_owner],
-  new OwnerController.save
+  new OwnerController().save
 );
-ownerRouter.get("/getOwner", authenticated, new OwnerController.getOwner);
+ownerRouter.get("/getOwner", authenticated, new OwnerController().getOwner);
 
 export { ownerRouter };
