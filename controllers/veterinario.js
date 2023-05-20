@@ -1,9 +1,9 @@
 "use strict";
 
-const { Veterinaria } = require("./../models/users");
+import { Vete } from "./../models/users.js";
 
-const controller = {
-  save: (req, res) => {
+class EmployeeController{
+  save (req, res) {
     const { nombre, apellido, matricula } = req.body;
     const { sub } = req.user;
     Veterinaria.findById(sub, (err, result) => {
@@ -20,8 +20,8 @@ const controller = {
         empleado: result,
       });
     });
-  },
-  getVets: (req, res) => {
+  }
+  getVets(req, res) {
     const { sub } = req.user;
     Veterinaria.findById(sub, (err, result) => {
       res.status(200).send({
@@ -30,8 +30,8 @@ const controller = {
         empleados: result.veterinarios,
       });
     });
-  },
-  update: (req, res) => {
+  }
+  update (req, res) {
     const { sub } = req.user;
     const { employeeId } = req.query;
     const { nombre, apellido, matricula } = req.body;
@@ -63,8 +63,8 @@ const controller = {
             });
       }
     );
-  },
-  delete: (req, res) => {
+  }
+  delete (req, res) {
     const { sub } = req.user;
     const { employeeId } = req.query;
     Veterinaria.updateOne(
@@ -93,7 +93,8 @@ const controller = {
             });
       }
     );
-  },
-};
+  }
+}
 
-module.exports = controller;
+
+export { EmployeeController};

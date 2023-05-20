@@ -1,25 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const petController = require("../../controllers/pets");
-const consultaController = require("../../controllers/consulta");
+import express from "express";
+const petRouter = express.Router();
+import {PetController} from "../../controllers/pets.js";
+import {ConsultaController}  from "../../controllers/consulta.js";
 // MIDDLEWARES
-const { validate_pet } = require("../../middlewares/validateData");
-const md_auth = require("../../middlewares/authenticated");
-const { uploadSingle } = require("../../middlewares/multer_single");
+import { validate_pet } from"../../middlewares/validateData.js";
+import {authenticated as md_auth} from "../../middlewares/authenticated.js";
+import { uploadSingle }  from "../../middlewares/multer_single.js";
 
-router.post("/new/", [md_auth.authenticated, validate_pet], petController.save);
-router.post("/new/consulta", md_auth.authenticated, consultaController.save);
+petRouter.post("/new/", [md_auth.authenticated, validate_pet], new PetController().save());
+petRouter.post("/new/consulta", md_auth.authenticated, new ConsultaController().save());
+petRouter.get("/single", md_auth.authenticated, new PetController().findOne());
+petRouter.get("/all", md_auth.authenticated, new PetController().findAll());
+petRouter.put("/update", md_auth.authenticated, new PetController().update());
+petRouter.delete("/delete", md_auth.authenticated, new PetController().delete());
+petRouter.post("/uploadRay", [md_auth.authenticated, uploadSingle], new PetController().uploadRayX());
+petRouter.get("/getRay", md_auth.authenticated, new PetController().getRay());
 
-// router.get("/", md_auth.authenticated, ownerController.getByVeteId);
-router.get("/single", md_auth.authenticated, petController.findOne);
-router.get("/all", md_auth.authenticated, petController.findAll);
-router.put("/update", md_auth.authenticated, petController.update);
-router.delete("/delete", md_auth.authenticated, petController.delete);
-router.post(
-  "/uploadRay",
-  [md_auth.authenticated, uploadSingle],
-  petController.uploadRayX
-);
-router.get("/getRay", md_auth.authenticated, petController.getRay);
-
-module.exports = router;
+export {petRouter};

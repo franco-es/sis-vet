@@ -1,19 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const ownerController = require("./../controllers/owner");
-const { validate_owner } = require("./../middlewares/validateData");
-const md_auth = require("./../middlewares/authenticated");
+import { Router } from "express";
+const ownerRouter = Router();
+import { OwnerController } from "./../controllers/owner.js";
+import { validate_owner } from "./../middlewares/validateData.js";
+import { authenticated } from "./../middlewares/authenticated.js";
 
-router.post(
+ownerRouter.post(
   "/new",
-  [md_auth.authenticated, validate_owner],
-  ownerController.save
+  [authenticated, validate_owner],
+  new OwnerController.save()
 );
-router.put(
+ownerRouter.put(
   "/update",
-  [md_auth.authenticated, validate_owner],
-  ownerController.save
+  [authenticated, validate_owner],
+  new OwnerController.save()
 );
-router.get("/getOwner", md_auth.authenticated, ownerController.getOwner);
+ownerRouter.get("/getOwner", authenticated, new OwnerController.getOwner());
 
-module.exports = router;
+export { ownerRouter };

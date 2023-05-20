@@ -1,24 +1,25 @@
-const express = require("express");
-const morgan = require("morgan");
-const dotenv = require("dotenv");
-dotenv.config();
-const bodyParser = require("body-parser");
+import express from "express";
+import morgan from "morgan";
+import { config } from "dotenv";
+config();
+import pkg from 'body-parser';
+const { json, urlencoded } = pkg;
 
 // EJECUTAR EXPRESS
 const app = express();
 
 // CONFIGURAR ARCHIVOS DE RUTAS
-const user_routes = require("./routes/usuarios");
-const employee_routes = require("./routes/employee");
-const owner_routes = require("./routes/owner");
-const pet_routes = require("./routes/mascotas/pets");
-const consulta_routes = require("./routes/mascotas/consulta");
-const cirugia_routes = require("./routes/mascotas/cirugia");
-const vacuna_routes = require("./routes/mascotas/vacuna");
+import { userRouter } from "./routes/usuarios.js";
+import { employeeRouter } from "./routes/employee.js";
+import { ownerRouter } from "./routes/owner.js";
+import { petRouter } from "./routes/mascotas/pets.js";
+import { consultaRouter } from "./routes/mascotas/consulta.js";
+import { cirugiaRouter } from "./routes/mascotas/cirugia.js";
+import { vacunaRouter } from "./routes/mascotas/vacuna.js";
 
 // MIDDLEWARES
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 
 // CONFIGURAR CORS
 app.use((req, res, next) => {
@@ -33,12 +34,12 @@ app.use((req, res, next) => {
 });
 
 // REESCRIBIMOS LAS RUTAS
-app.use("/api/user", user_routes);
-app.use("/api/employee", employee_routes);
-app.use("/api/owner", owner_routes);
-app.use("/api/pet", pet_routes);
-app.use("/api/consulta", consulta_routes);
-app.use("/api/cirugia", cirugia_routes);
-app.use("/api/vacuna", vacuna_routes);
+app.use("/api/user", userRouter);
+app.use("/api/employee", employeeRouter);
+app.use("/api/owner", ownerRouter);
+app.use("/api/pet", petRouter);
+app.use("/api/consulta", consultaRouter);
+app.use("/api/cirugia", cirugiaRouter);
+app.use("/api/vacuna", vacunaRouter);
 
-module.exports = app;
+export {app};

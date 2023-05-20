@@ -1,12 +1,12 @@
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+import multer, { diskStorage } from "multer";
+import { existsSync, mkdirSync } from "fs";
+import path from "path";
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
   destination: (req, file, cb) => {
     const destine = `./statics/${req.user.sub}/${req.query.idPet}/${req.query.idConsulta}`;
-    if (!fs.existsSync(destine)) {
-      fs.mkdirSync(destine, {
+    if (!existsSync(destine)) {
+      mkdirSync(destine, {
         recursive: true,
       });
     }
@@ -19,4 +19,4 @@ const storage = multer.diskStorage({
 
 const uploadSingle = multer({ storage: storage }).single("img");
 
-module.exports = { uploadSingle };
+export { uploadSingle };

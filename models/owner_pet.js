@@ -1,53 +1,60 @@
 "use strict";
-const mongoose = require("mongoose");
+import DataTypes from "sequelize";
+import {conn} from "../services/sequelize.js";
 
-const Schema = mongoose.Schema;
+const sequelize = conn.sequelize;
 
-const consultaSchema = Schema({
-  fecha: String,
-  contenido: String,
-  diagnostico: String,
-  tratamiento: String,
-  photo: String,
-  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
+
+const Consulta = sequelize.define("sv_consulta",{
+  fecha: {type: DataTypes.STRING},
+  contenido: {type: DataTypes.STRING},
+  diagnostico: {type: DataTypes.STRING},
+  tratamiento: {type: DataTypes.STRING},
+  photo: {type: DataTypes.STRING},
 });
 
-const vacunaSchema = Schema({
-  nombre: String,
-  fecha: String,
-  prox_aplicacion: String,
-  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
+
+
+const Vacuna = sequelize.define("sv_vacuna",{
+  nombre: {type: DataTypes.STRING},
+  fecha: {type: DataTypes.STRING},
+  prox_aplicacion: {type: DataTypes.STRING},
 });
 
-const cirugiaSchema = Schema({
-  fecha: String,
-  contenido: String,
-  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
+const Cirugia = sequelize.define("sv_cirugia",{
+  fecha: {type: DataTypes.STRING},
+  contenido: {type: DataTypes.STRING},
 });
 
-const ownerSchema = Schema({
-  nombre: String,
-  apellido: String,
-  telefono: String,
-  direccion: String,
-  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
+const Owner = sequelize.define("sv_owner",{
+  nombre: {type: DataTypes.STRING},
+  apellido: {type: DataTypes.STRING},
+  telefono: {type: DataTypes.STRING},
+  direccion: {type: DataTypes.STRING},
 });
 
-const petSchema = Schema({
-  nombre: String,
-  especie: String,
-  raza: String,
-  color: String,
-  f_nacimiento: Date,
-  photo: String,
-  created: { type: Date, default: Date.now },
-  owner: ownerSchema,
-  consultas: [consultaSchema],
-  vacunas: [vacunaSchema],
-  cirugia: [cirugiaSchema],
-  vete: { type: Schema.ObjectId, ref: "Veterinaria" },
+const Pet = sequelize.define("sv_pet",{
+  nombre: {type: DataTypes.STRING},
+  especie: {type: DataTypes.STRING},
+  raza: {type: DataTypes.STRING},
+  color: {type: DataTypes.STRING},
+  f_nacimiento: {type:  DataTypes.DATE},
+  photo: {type: DataTypes.STRING},
 });
 
-const Pet = mongoose.model("Pet", petSchema);
+Pet.BelongsTo(Owner);
+Owner.hasMany(Pet,{
+  foreignKey: "ownerId"
+})
+Pet.hasMany(Cirugia,{
+  foreignKey: "petId"
+})
+Pet.hasMany(Vacuna,{
+  foreignKey: "petId"
+})
+Pet.hasMany(Consulta,{
+  foreignKey: "petId"
+})
 
-module.exports = { Pet };
+
+export { Pet, Owner, Cirugia, Vacuna, Consulta };

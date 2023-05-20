@@ -1,47 +1,34 @@
 "use strict";
 
-const bcrypt = require("bcrypt");
-const fs = require("fs");
-const path = require("path");
-const { Vete, User } = require("./../models/users");
-const jwt = require("../services/jwt");
-const registerEmail = require("../services/send");
-const FileSystem = require("../services/uploadImage");
+import { genSaltSync, compare } from "bcrypt";
+import fs from "fs";
+import path from "path";
+import { Vete, User } from "./../models/users.js";
+import { createToken } from "../services/jwt.js";
+import registerEmail from "../services/send.js";
+import FileSystem from "../services/uploadImage.js";
+import { UserService } from "../services/userService.js";
 // const { default: validator } = require("validator");
 
 const saltRouds = 10;
-const salt = bcrypt.genSaltSync(saltRouds);
+const salt = genSaltSync(saltRouds);
 
 class VeteController {
   constructor() {}
 
   save(req, res) {
-    const { nombre, telefono, email, password } = req.body;
-
-    const user = {};
-    user.name = nombre;
-    user.phone = telefono;
-    user.email = email;
-    user.role = "veterinaria";
-    user.img_url = null;
-    user.active = 1;
-    user.deleted = 0;
-
-    bcrypt.hash(password, salt, (err, hash) => {
-      user.pass = hash;
-      try {
-        User.create(user).then((data) => {
-          res.status(200).send({
-            message: "GENIAL! SE GUARDO EL USUARIO",
-            user: data,
-          });
-        });
-      } catch (err) {
-        res.status(400).send({ error: err });
-      }
-    });
+    const userService = new UserService();
+    try {
+      const userCreated = userService.saveOrUpdate(req);
+      res.status(200).send({
+        message: "GENIAL! SE GUARDO EL USUARIO",
+        user: userCreated,
+      });
+    } catch (err) {
+      res.status(400).send({ error: err.message });
+    }
+    
   }
-
   login(req, res) {
     const { email, password, getToken } = req.body;
     const Email = email.toLowerCase();
@@ -50,12 +37,12 @@ class VeteController {
       User.findOne({ where: { email: email } }).then((data) => {
         data == null
           ? res.status(500).json({ message: "user not Found" })
-          : bcrypt.compare(password, data.pass, (err, check) => {
+          : compare(password, data.pass, (err, check) => {
               check
                 ? getToken
                   ? res
                       .status(200)
-                      .cookie('token', jwt.createToken(data), { maxAge: 900000, httpOnly: true })
+                      .cookie('token', createToken(data), { maxAge: 900000, httpOnly: true })
                       .send({
                         user: data,
                       })
@@ -80,6 +67,7 @@ class VeteController {
   update(req, res) {
     const { email, nombre, telefono } = req.body;
     const { sub } = req.user;
+    const userService = new UserService();
     User.update(
       {
         name: nombre,
@@ -130,4 +118,4 @@ class VeteController {
   }
 }
 
-module.exports = { VeteController };
+export { VeteController };

@@ -1,10 +1,10 @@
 "use strict";
 
-const { Pet } = require("./../models/owner_pet");
-// const petController = require("./pets");
+import { Pet } from "./../models/owner_pet.js";
 
-const controller = {
-  save: async (req, res) => {
+class VacunaController{
+  constructor(){};
+  async save (req, res){
     const { idPet } = req.query;
     const { fecha, prox_aplicacion, nombre } = req.body;
 
@@ -25,8 +25,8 @@ const controller = {
         res.status(400).send({ message: "ocurrio un error", error: err });
       }
     });
-  },
-  update: async (req, res) => {
+  }
+  async update (req, res) {
     const { idPet, idConsulta } = req.query;
     const { fecha, prox_aplicacion } = req.body;
     Pet.updateOne(
@@ -56,8 +56,8 @@ const controller = {
             });
       }
     );
-  },
-  getvacunas: (req, res) => {
+  }
+  getvacunas (req, res) {
     const { idPet } = req.query;
     Pet.findById(idPet, (err, result) => {
       res.status(200).send({
@@ -65,8 +65,8 @@ const controller = {
         resultado: result.vacunas,
       });
     });
-  },
-  delete: async (req, res) => {
+  }
+  async delete (req, res) {
     const { idPet, idVacuna } = req.query;
     Pet.updateOne(
       { _id: idPet },
@@ -94,6 +94,7 @@ const controller = {
             });
       }
     );
-  },
-};
-module.exports = controller;
+  }
+}
+
+export {VacunaController};

@@ -1,12 +1,13 @@
 "use strict";
 
 const { Pet } = require("./../models/owner_pet");
-const FileSystem = require("../services/uploadImage");
+const FileSystem = require("../services/uploadImage").default;
 const fs = require("fs");
 const path = require("path");
 
-const controller = {
-  save: async (req, res) => {
+class PetController{
+  constructor(){}
+  async save(req, res) {
     const { sub } = req.user;
     const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
@@ -27,8 +28,8 @@ const controller = {
             mascota: mascota,
           });
     });
-  },
-  update: (req, res) => {
+  }
+  update (req, res) {
     const { idPet } = req.query;
     const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
@@ -56,8 +57,8 @@ const controller = {
             });
       }
     );
-  },
-  delete: (req, res) => {
+  }
+  async delete (req, res) {
     const { idOwner, idPet } = req.query;
 
     Owner.findById({ _id: idOwner }, (err, duenio) => {
@@ -83,8 +84,8 @@ const controller = {
         });
       });
     });
-  },
-  findOne: (req, res) => {
+  }
+  findOne (req, res) {
     // const { sub } = req.user;
     const { idPet } = req.query;
 
@@ -99,8 +100,8 @@ const controller = {
             pet: result,
           });
     });
-  },
-  findAll: (req, res) => {
+  }
+  findAll (req, res) {
     const { sub } = req.user;
     Pet.find({ vete: sub }, (err, result) => {
       !result
@@ -115,8 +116,8 @@ const controller = {
             pet: result,
           });
     });
-  },
-  uploadRayX: (req, res) => {
+  }
+  uploadRayX (req, res) {
     const { idPet, idConsulta } = req.query;
     console.log(req.file);
     Pet.updateOne(
@@ -146,8 +147,8 @@ const controller = {
             });
       }
     );
-  },
-  getRay: (req, res) => {
+  }
+  getRay (req, res) {
     const { sub } = req.user;
     const { idPet, idConsulta, img } = req.query;
     const pathImg = `../statics/${sub}/${idPet}/${idConsulta}/${img}`;
@@ -162,7 +163,8 @@ const controller = {
       //file exists
       res.sendFile(path.join(__dirname, pathImg));
     });
-  },
-};
+  }
+}
 
-module.exports = controller;
+
+export {PetController};

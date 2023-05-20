@@ -1,16 +1,45 @@
-const {User} = require("../models/users");
+import { User } from "../models/users.js";
+// import { sequelize } from "../services/sequelize";
+import { hash as _hash } from "bcrypt";
 
 
 class UserService{
   constructor(){};
+
+  copyProperties(dest, req){
+    const { nombre, telefono, email, password } = req.body;
+  
+    dest.name = nombre;
+    dest.phone = telefono;
+    dest.email = email;
+    dest.role = "veterinaria";
+    dest.img_url = null;
+    dest.active = 1;
+    dest.deleted = 0;
+    let salt = 3;
+    _hash(password, salt, (err, hash) => {
+      dest.pass = hash;
+    });
+  }
+
   findByEmail(email){
     User.findOne({where:{email: email}})
       .then((data) => {return data;})
   }
-  // save(user){
-  //   User.create(user).then((data) => {return data});
-  // }
+  async saveOrUpd1ate(req){
+    const user = {};
+    try {
+      this.copyProperties(user, req);
+      if(req.user != undefined){
+  
+      }else{
+        User.create(user).then((data) => {return data});
+      }
+    } catch (error) {
+      throw new Error("error al crear o modificar un usuario")
+    }
+  }
 }
 
 
-module.exports = {UserService};
+export {UserService};

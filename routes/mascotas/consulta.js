@@ -1,27 +1,27 @@
 const express = require("express");
-const router = express.Router();
+const consultaRouter = express.Router();
 // const petController = require("../../controllers/pets");
 const consultaController = require("../../controllers/consulta");
 // const { validate_pet } = require("../../middlewares/validateData");
 const md_auth = require("../../middlewares/authenticated");
-const { validate_consult } = require("../../middlewares/validateData");
+const { validate_consult } = require("../../middlewares/validateData").default;
 
-router.post(
+consultaRouter.post(
   "/new/",
   [md_auth.authenticated, validate_consult],
   consultaController.save
 );
-router.put(
+consultaRouter.put(
   "/update",
   [md_auth.authenticated, validate_consult],
   consultaController.update
 );
 
-router.get(
+consultaRouter.get(
   "/getConsultas",
   md_auth.authenticated,
   consultaController.getConsultas
 );
-router.delete("/delete", md_auth.authenticated, consultaController.delete);
+consultaRouter.delete("/delete", md_auth.authenticated, consultaController.delete);
 
-module.exports = router;
+export {consultaRouter};

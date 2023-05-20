@@ -1,5 +1,5 @@
-const { User } = require("../models/users");
-const {UserService } = require('../services/userService');
+// import { User } from "../models/users.js";
+import { UserService } from '../services/userService.js';
 
 const checkEmailUpdate = (req, res, next) => {
   const { email } = req.body;
@@ -28,4 +28,4 @@ const checkEmail = (req, res, next) => {
   }
 };
 
-module.exports = { checkEmailUpdate, checkEmail };
+export default { checkEmailUpdate, checkEmail };

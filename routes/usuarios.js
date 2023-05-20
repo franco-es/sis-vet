@@ -1,19 +1,20 @@
-const express = require("express");
-const router = express.Router();
-const {VeteController} = require("./../controllers/veterinaria");
-const { create, login, update } = require("./../middlewares/validateData");
-const md_auth = require("./../middlewares/authenticated");
-const { checkEmailUpdate, checkEmail } = require("../middlewares/checkEmail");
+import { Router } from "express";
+const userRouter = Router();
+import { VeteController } from "./../controllers/veterinaria.js";
+import { create, login, update } from "./../middlewares/validateData.js";
+import { authenticated } from "./../middlewares/authenticated.js";
+import _default from "../middlewares/checkEmail.js";
+const { checkEmailUpdate, checkEmail } = _default;
 
-router.post("/new", [create, checkEmail], new VeteController().save);
-router.post("/login", login, new VeteController().login);
-router.put(
+userRouter.post("/new", [create, checkEmail], new VeteController().save);
+userRouter.post("/login", login, new VeteController().login);
+userRouter.put(
   "/update",
-  [md_auth.authenticated, update, checkEmailUpdate],
+  [authenticated, update, checkEmailUpdate],
   new VeteController().update
 );
-router.post("/uploadAvatar", md_auth.authenticated, new VeteController().uploadImage);
-// router.delete('/delete/:id', userController.deleteVet);
-// router.get('/admin/all', userController.getAll);
+userRouter.post("/uploadAvatar", authenticated, new VeteController().uploadImage);
+// userRouter.delete('/delete/:id', userController.deleteVet);
+// userRouter.get('/admin/all', userController.getAll);
 
-module.exports = router;
+export {userRouter};

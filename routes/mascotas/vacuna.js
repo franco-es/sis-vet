@@ -1,21 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const vacunaController = require("../../controllers/vacuna");
-const { validate_vacuna } = require("../../middlewares/validateData");
+import { Router } from "express";
+const vacunaRouter = Router();
+import { VacunaController } from "../../controllers/vacuna.js";
+import { validate_vacuna } from "../../middlewares/validateData.js";
 
-const md_auth = require("../../middlewares/authenticated");
+import { authenticated } from "../../middlewares/authenticated.js";
 
-router.post(
-  "/new/",
-  [md_auth.authenticated, validate_vacuna],
-  vacunaController.save
-);
-router.put("/update", md_auth.authenticated, vacunaController.update);
+vacunaRouter.post("/new/", [authenticated, validate_vacuna], new VacunaController().save());
+vacunaRouter.put("/update", authenticated, new VacunaController().update());
 
-router.get(
-  "/getvacunas",
-  md_auth.authenticated,
-  vacunaController.getvacunas
-);
-router.delete("/delete", md_auth.authenticated, vacunaController.delete);
-module.exports = router;
+vacunaRouter.get("/getvacunas", authenticated, new VacunaController.getvacunas());
+vacunaRouter.delete("/delete", authenticated, new VacunaController().delete());
+export {vacunaRouter};
