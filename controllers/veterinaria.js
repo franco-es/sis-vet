@@ -20,6 +20,7 @@ class VeteController {
     const userService = new UserService();
     try {
       const userCreated = userService.saveOrUpdate(req);
+      User.create(user).then((data) => {return data});
       res.status(200).send({
         message: "GENIAL! SE GUARDO EL USUARIO",
         user: userCreated,

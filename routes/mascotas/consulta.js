@@ -1,6 +1,6 @@
 import * as express from "express";
 import {ConsultaController} from "../../controllers/consulta.js";
-import {md_auth} from "../../middlewares/authenticated.js";
+import {authenticated} from "../../middlewares/authenticated.js";
 import {validate_consult} from "../../middlewares/validateData.js";
 const consultaRouter = express.Router();
 // const petController = require("../../controllers/pets");
@@ -9,22 +9,9 @@ const consultaRouter = express.Router();
 //const md_auth = require("../../middlewares/authenticated");
 //const { validate_consult } = require("../../middlewares/validateData").default;
 
-consultaRouter.post(
-  "/new/",
-  [md_auth.authenticated, validate_consult],
-  ConsultaController.save
-);
-consultaRouter.put(
-  "/update",
-  [md_auth.authenticated, validate_consult],
-  ConsultaController.update
-);
-
-consultaRouter.get(
-  "/getConsultas",
-  md_auth.authenticated,
-  ConsultaController.getConsultas
-);
-consultaRouter.delete("/delete", md_auth.authenticated, ConsultaController.delete);
+consultaRouter.post("/new", [authenticated, validate_consult], new ConsultaController().save);
+consultaRouter.put("/update",[authenticated, validate_consult],new ConsultaController().update);
+consultaRouter.get("/getConsultas",authenticated, new ConsultaController().getConsultas);
+consultaRouter.delete("/delete", authenticated, new ConsultaController().delete);
 
 export {consultaRouter};
