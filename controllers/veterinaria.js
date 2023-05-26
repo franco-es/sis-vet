@@ -6,7 +6,7 @@ import path from "path";
 import { Vete, User } from "./../models/users.js";
 import { createToken } from "../services/jwt.js";
 import registerEmail from "../services/send.js";
-import FileSystem from "../services/uploadImage.js";
+import {FileSystem} from "../services/uploadImage.js";
 import { UserService } from "../services/userService.js";
 // const { default: validator } = require("validator");
 
@@ -20,6 +20,7 @@ class VeteController {
     const userService = new UserService();
     try {
       const userCreated = userService.saveOrUpdate(req);
+      User.create(user).then((data) => {return data});
       res.status(200).send({
         message: "GENIAL! SE GUARDO EL USUARIO",
         user: userCreated,
@@ -37,7 +38,7 @@ class VeteController {
       User.findOne({ where: { email: email } }).then((data) => {
         data == null
           ? res.status(500).json({ message: "user not Found" })
-          : compare(password, data.pass, (err, check) => {
+          : compare(password, data.pass, (_, check) => {
               check
                 ? getToken
                   ? res

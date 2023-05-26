@@ -1,27 +1,17 @@
-const express = require("express");
+import * as express from "express";
+import {ConsultaController} from "../../controllers/consulta.js";
+import {authenticated} from "../../middlewares/authenticated.js";
+import {validate_consult} from "../../middlewares/validateData.js";
 const consultaRouter = express.Router();
 // const petController = require("../../controllers/pets");
-const consultaController = require("../../controllers/consulta");
+//const consultaController = require("../../controllers/consulta");
 // const { validate_pet } = require("../../middlewares/validateData");
-const md_auth = require("../../middlewares/authenticated");
-const { validate_consult } = require("../../middlewares/validateData").default;
+//const md_auth = require("../../middlewares/authenticated");
+//const { validate_consult } = require("../../middlewares/validateData").default;
 
-consultaRouter.post(
-  "/new/",
-  [md_auth.authenticated, validate_consult],
-  consultaController.save
-);
-consultaRouter.put(
-  "/update",
-  [md_auth.authenticated, validate_consult],
-  consultaController.update
-);
-
-consultaRouter.get(
-  "/getConsultas",
-  md_auth.authenticated,
-  consultaController.getConsultas
-);
-consultaRouter.delete("/delete", md_auth.authenticated, consultaController.delete);
+consultaRouter.post("/new", [authenticated, validate_consult], new ConsultaController().save);
+consultaRouter.put("/update",[authenticated, validate_consult],new ConsultaController().update);
+consultaRouter.get("/getConsultas",authenticated, new ConsultaController().getConsultas);
+consultaRouter.delete("/delete", authenticated, new ConsultaController().delete);
 
 export {consultaRouter};

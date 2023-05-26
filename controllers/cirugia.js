@@ -1,6 +1,6 @@
 "use strict";
 
-const { Pet } = require("./../models/owner_pet");
+import  { Pet } from "../models/owner_pet.js";
 
 class CirugiaController{
   constructor(){}
@@ -96,4 +96,4 @@ class CirugiaController{
   }
 
 }
-module.exports = controller;
+export {CirugiaController};

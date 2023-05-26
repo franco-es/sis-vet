@@ -42,7 +42,6 @@ const Pet = sequelize.define("sv_pet",{
   photo: {type: DataTypes.STRING},
 });
 
-Pet.BelongsTo(Owner);
 Owner.hasMany(Pet,{
   foreignKey: "ownerId"
 })

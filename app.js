@@ -11,7 +11,7 @@ const app = express();
 // CONFIGURAR ARCHIVOS DE RUTAS
 import { userRouter } from "./routes/usuarios.js";
 import { employeeRouter } from "./routes/employee.js";
-import { ownerRouter } from "./routes/owner.js";
+import { ownerRouter } from "./routes/ownerRoutes.js";
 import { petRouter } from "./routes/mascotas/pets.js";
 import { consultaRouter } from "./routes/mascotas/consulta.js";
 import { cirugiaRouter } from "./routes/mascotas/cirugia.js";
