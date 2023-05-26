@@ -1,9 +1,12 @@
 "use strict";
 
-const { Pet } = require("./../models/owner_pet");
-const FileSystem = require("../services/uploadImage").default;
-const fs = require("fs");
-const path = require("path");
+import { Pet } from "./../models/owner_pet.js";
+import { FileSystem } from "../services/uploadImage.js";
+import fs from 'fs/promises'
+import * as path from 'path';
+//const FileSystem = require("../services/uploadImage").default;
+//const fs = require("fs");
+//const path = require("path");
 
 class PetController{
   constructor(){}

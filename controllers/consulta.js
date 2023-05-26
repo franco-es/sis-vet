@@ -1,6 +1,5 @@
 "use strict";
-
-const { Pet } = require("./../models/owner_pet");
+import { Pet } from "./../models/owner_pet.js";
 // const petController = require("./pets");
 
 class ConsultaController{

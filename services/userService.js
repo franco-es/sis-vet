@@ -26,12 +26,16 @@ class UserService{
     User.findOne({where:{email: email}})
       .then((data) => {return data;})
   }
-  async saveOrUpd1ate(req){
+  async saveOrUpdate(req){
     const user = {};
     try {
       this.copyProperties(user, req);
       if(req.user != undefined){
-  
+        User.update({
+          name: user.name,
+          phone: user.phone,
+          email: user.email},{where:{id: req.user.sub}})
+          .then(data => data);
       }else{
         User.create(user).then((data) => {return data});
       }
