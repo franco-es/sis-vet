@@ -1,45 +1,44 @@
 "use strict";
-import DataTypes from "sequelize";
 import {conn} from "../services/sequelize.js";
 
 const sequelize = conn.sequelize;
 
 
 const Consulta = sequelize.define("sv_consulta",{
-  fecha: {type: DataTypes.STRING},
-  contenido: {type: DataTypes.STRING},
-  diagnostico: {type: DataTypes.STRING},
-  tratamiento: {type: DataTypes.STRING},
-  photo: {type: DataTypes.STRING},
+  fecha: {type: conn.Sequelize.STRING},
+  contenido: {type: conn.Sequelize.STRING},
+  diagnostico: {type: conn.Sequelize.STRING},
+  tratamiento: {type: conn.Sequelize.STRING},
+  photo: {type: conn.Sequelize.STRING},
 });
 
 
 
-const Vacuna = sequelize.define("sv_vacuna",{
-  nombre: {type: DataTypes.STRING},
-  fecha: {type: DataTypes.STRING},
-  prox_aplicacion: {type: DataTypes.STRING},
+const Vacuna = sequelize.define("sv_vacunas",{
+  nombre: {type: conn.Sequelize.STRING},
+  fecha: {type: conn.Sequelize.STRING},
+  prox_aplicacion: {type: conn.Sequelize.STRING},
 });
 
 const Cirugia = sequelize.define("sv_cirugia",{
-  fecha: {type: DataTypes.STRING},
-  contenido: {type: DataTypes.STRING},
+  fecha: {type: conn.Sequelize.STRING},
+  contenido: {type: conn.Sequelize.STRING},
 });
 
-const Owner = sequelize.define("sv_owner",{
-  nombre: {type: DataTypes.STRING},
-  apellido: {type: DataTypes.STRING},
-  telefono: {type: DataTypes.STRING},
-  direccion: {type: DataTypes.STRING},
+const Owner = sequelize.define("sv_owners",{
+  nombre: {type: conn.Sequelize.STRING},
+  apellido: {type: conn.Sequelize.STRING},
+  telefono: {type: conn.Sequelize.STRING},
+  direccion: {type: conn.Sequelize.STRING},
 });
 
-const Pet = sequelize.define("sv_pet",{
-  nombre: {type: DataTypes.STRING},
-  especie: {type: DataTypes.STRING},
-  raza: {type: DataTypes.STRING},
-  color: {type: DataTypes.STRING},
-  f_nacimiento: {type:  DataTypes.DATE},
-  photo: {type: DataTypes.STRING},
+const Pet = sequelize.define("sv_pets",{
+  nombre: {type: conn.Sequelize.STRING},
+  especie: {type: conn.Sequelize.STRING},
+  raza: {type: conn.Sequelize.STRING},
+  color: {type: conn.Sequelize.STRING},
+  f_nacimiento: {type:  conn.Sequelize.DATE},
+  photo: {type: conn.Sequelize.STRING},
 });
 
 Owner.hasMany(Pet,{

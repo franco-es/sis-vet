@@ -1,6 +1,6 @@
 "use strict";
 
-import { genSaltSync, compare } from "bcrypt";
+import bcrypt, {genSaltSync, hashSync} from "bcrypt";
 import fs from "fs";
 import path from "path";
 import { Vete, User } from "./../models/users.js";
@@ -10,54 +10,73 @@ import {FileSystem} from "../services/uploadImage.js";
 import { UserService } from "../services/userService.js";
 // const { default: validator } = require("validator");
 
-const saltRouds = 10;
-const salt = genSaltSync(saltRouds);
-
 class VeteController {
   constructor() {}
 
-  save(req, res) {
-    const userService = new UserService();
+  async save(req, res) {
+    const { nombre, telefono, email, password } = req.body;
     try {
-      const userCreated = userService.saveOrUpdate(req);
-      User.create(user).then((data) => {return data});
-      res.status(200).send({
-        message: "GENIAL! SE GUARDO EL USUARIO",
-        user: userCreated,
-      });
+      const saltRounds = 10;
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hash = bcrypt.hashSync(password, salt);
+      User.create({
+        name: nombre,
+        phone : telefono,
+        email : email,
+        role : "veterinaria",
+        active : true,
+        deleted : false,
+        pass : hash
+      }).then((data) =>{
+        if (data == null) {
+          res.status(404).send({
+            message: err,
+          });
+        } else {
+          res.status(200).send({
+            message: "GENIAL! SE GUARDO EL USUARIO",
+            user: data,
+          });
+        }
+      })
     } catch (err) {
-      res.status(400).send({ error: err.message });
+      res.status(400).send({error: err.message});
     }
-    
+
   }
   login(req, res) {
     const { email, password, getToken } = req.body;
     const Email = email.toLowerCase();
-    // BUSCAR EL USUARIO QUE COINCIDA CON EL EMAIL
+
     try {
       User.findOne({ where: { email: email } }).then((data) => {
-        data == null
-          ? res.status(500).json({ message: "user not Found" })
-          : compare(password, data.pass, (_, check) => {
-              check
-                ? getToken
-                  ? res
-                      .status(200)
-                      .cookie('token', createToken(data), { maxAge: 900000, httpOnly: true })
-                      .send({
-                        user: data,
-                      })
-                  : (
-                    res.status(500).send({
-                      status: "error",
-                      message: "No mando getToken",
-                    })
-                    )
-                : res.status(400).send({
-                    status: "DENIED",
-                    message: "LAS CREDENCIALES NO SON CORRECTAS",
-                  });
-            });
+        if (data == null) {
+          res.status(500).json({ message: "User not found" });
+        } else {
+          compare(password, data.pass, (_, check) => {
+            if (check) {
+              if (getToken) {
+                res
+                    .status(200)
+                    .cookie('token', createToken(data), { maxAge: 900000, httpOnly: true })
+                    .send({
+                      user: data,
+                      token: createToken(data)
+                    });
+              } else {
+                res.status(500).send({
+                  status: "error",
+                  message: "No getToken provided",
+                });
+              }
+            } else {
+              res.status(400).send({
+                status: "DENIED",
+                message: "Invalid credentials",
+              });
+            }
+          });
+        }
       });
     } catch (err) {
       res.status(400).send({
@@ -116,6 +135,14 @@ class VeteController {
       imagen: imagen,
       guardarArchivo: saveFile,
     });
+  }
+  async getAllVeterinarias(req, res){
+    User.findAll().then((data)=>{
+      res.status(200).json({
+        estado: "success",
+        users: data,
+      });
+    })
   }
 }
 

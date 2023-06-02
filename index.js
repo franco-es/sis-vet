@@ -8,7 +8,7 @@ var port = process.env.PORT || 8550;
 try{
   conn.sequelize.authenticate();
   info("la coneccion a db se realizo");
-  conn.sequelize.sync({ force: true });
+  //conn.sequelize.sync({ force: true });
   // log.info("sincronizados todos los modelos.")
   app.listen(port, () => {
     info("El servidor http://localhost:8550 está funcionando !!!");

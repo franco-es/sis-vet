@@ -15,6 +15,6 @@ userRouter.put(
 );
 userRouter.post("/uploadAvatar", authenticated, new VeteController().uploadImage);
 // userRouter.delete('/delete/:id', userController.deleteVet);
-// userRouter.get('/admin/all', userController.getAll);
+userRouter.get('/admin/all', authenticated, new VeteController().getAllVeterinarias);
 
 export {userRouter};
