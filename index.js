@@ -5,13 +5,10 @@ var app = require('./app');
 var log = require('npmlog');
 var port = process.env.PORT || 8550;
 
-mongoose.set("useFindAndModify", false);
+//mongoose.set("useFindAndModify", false);
 mongoose.Promise = global.Promise;
 mongoose
-  .connect("mongodb://127.0.0.1:27017/SisVet", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect("mongodb://127.0.0.1:27017/SisVet")
   .then(() => {
     log.info("la coneccion a mongo se realizo");
     app.listen(port, () => {

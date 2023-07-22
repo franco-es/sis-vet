@@ -13,7 +13,7 @@ const saltRouds = 10;
 const salt = bcrypt.genSaltSync(saltRouds);
 
 const controller = {
-  save: (req, res) => {
+  save: async (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
     const user = new Veterinaria();
@@ -25,21 +25,15 @@ const controller = {
     user.habilitado = 1;
     user.eliminado = 0;
 
-    bcrypt.hash(password, salt, (err, hash) => {
-      user.password = hash;
-      try {
-        user.save((err, userStored) => {
-          let name = userStored.nombre;
-          let email = userStored.email;
-          let send = registerEmail.registerEmail(email, name);
-          return res.status(200).send({
-            message: "GENIAL! SE GUARDO EL USUARIO",
-            user: userStored,
-          });
-        });
-      } catch (err) {
-        return res.status(400).send({ error: err });
-      }
+    let pass = await  bcrypt.hash(password, salt);
+    user.password = pass;
+    const data = await user.save();
+    let name = data.nombre;
+    let userEmail = data.email;
+    let send = registerEmail.registerEmail(email, name);
+    return res.status(200).send({
+      message: "GENIAL! SE GUARDO EL USUARIO",
+      user: user,
     });
   },
   login: (req, res) => {
