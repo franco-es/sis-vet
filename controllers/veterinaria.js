@@ -13,24 +13,30 @@ import { UserService } from "../services/userService.js";
 const saltRouds = 10;
 const salt = genSaltSync(saltRouds);
 
-class VeteController {
-  constructor() {}
+const controller = {
+  save: async (req, res) => {
+    const { nombre, telefono, email, password } = req.body;
 
-  save(req, res) {
-    const userService = new UserService();
-    try {
-      const userCreated = userService.saveOrUpdate(req);
-      User.create(user).then((data) => {return data});
-      res.status(200).send({
-        message: "GENIAL! SE GUARDO EL USUARIO",
-        user: userCreated,
-      });
-    } catch (err) {
-      res.status(400).send({ error: err.message });
-    }
-    
-  }
-  login(req, res) {
+    const user = new Veterinaria();
+    user.nombre = nombre;
+    user.telefono = telefono;
+    user.email = email.toLowerCase();
+    user.role = "veterinaria";
+    user.imagen = null;
+    user.habilitado = 1;
+    user.eliminado = 0;
+
+    let pass = await  bcrypt.hash(password, salt);
+    user.password = pass;
+    const data = await user.save();
+    let name = data.nombre;
+    let send = registerEmail.registerEmail(email, name);
+    return res.status(200).send({
+      message: "GENIAL! SE GUARDO EL USUARIO",
+      user: user,
+    });
+  },
+  login: (req, res) => {
     const { email, password, getToken } = req.body;
     const Email = email.toLowerCase();
     // BUSCAR EL USUARIO QUE COINCIDA CON EL EMAIL
@@ -64,7 +70,7 @@ class VeteController {
         error: err,
       });
     }
-  }
+  },
   update(req, res) {
     const { email, nombre, telefono } = req.body;
     const { sub } = req.user;
@@ -93,7 +99,7 @@ class VeteController {
         });
       }
     });
-  }
+  },
   uploadImage(req, res) {
     const fileSystem = new FileSystem();
     const image = req.file.img;

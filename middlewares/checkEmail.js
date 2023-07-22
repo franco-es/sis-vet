@@ -1,27 +1,48 @@
 // import { User } from "../models/users.js";
 import { UserService } from '../services/userService.js';
 
-const checkEmailUpdate = (req, res, next) => {
+const checkEmailUpdate = async (req, res, next) => {
   const { email } = req.body;
   const emailSub = req.user.email;
 
-  const us = new UserService();
-  const user = us.findByEmail(email);
-  if(user == null || user.email == emailSub){
-    next();
-  }else{
-    res.status(400).json({
-      message: "User found",
-    });
-  }
-
+  Veterinaria.findOne({ email: email }, (err, user) => {
+    if (err) {
+      // un error indica que hubo problemas con la consulta
+      res.status(500).json({
+        error: "Server error",
+      });
+    }
+    if (user === null) {
+      console.log(emailSub);
+      console.log(user);
+      next();
+    }
+    if (user) {
+      if (user.email == emailSub) {
+        console.log(user.email);
+        console.log(emailSub);
+        next();
+      } else {
+        console.log(user.email);
+        console.log(emailSub);
+        // Si el usuario  existe
+        res.status(400).json({
+          message: "User found",
+        });
+      }
+    }
+  });
 };
-const checkEmail = (req, res, next) => {
-  const us = new UserService();
-  const user = us.findByEmail(req, res);
-  if(user == null){
+const checkEmail = async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await Veterinaria.findOne({ email: email });
+  if (user === null) {
+    console.log(user);
     next();
-  }else{
+  } else {
+    console.log(user);
+    // Si el usuario  existe
     res.status(400).json({
       message: "User found",
     });
