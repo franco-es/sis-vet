@@ -29,7 +29,6 @@ const controller = {
     user.password = pass;
     const data = await user.save();
     let name = data.nombre;
-    let userEmail = data.email;
     let send = registerEmail.registerEmail(email, name);
     return res.status(200).send({
       message: "GENIAL! SE GUARDO EL USUARIO",
