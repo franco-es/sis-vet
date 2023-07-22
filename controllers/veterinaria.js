@@ -34,6 +34,7 @@ const controller = {
       message: "GENIAL! SE GUARDO EL USUARIO",
       user: user,
     });
+    
   },
   login: (req, res) => {
     const { email, password, getToken } = req.body;
