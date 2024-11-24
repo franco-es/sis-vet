@@ -1,15 +1,14 @@
-import Sequelize from "sequelize";
-const conn = {};
+const Sequelize = require("sequelize");
 
-const db = new Sequelize('Sys_vet_db', 'root', 'root',{
-    host: 'localhost',
-    dialect:'mysql',
-    operatorsAliases: 'false',
-    logging: false
-});
+const sequelize = new Sequelize(
+    'sysvet',
+    'root',
+    'root',
+    {
+        host: "localhost",
+        dialect: 'mysql',
+        port: 3306
+    }
+)
 
-conn.sequelize = db;
-conn.Sequelize = Sequelize;
-
-
-export {conn};
+module.exports = sequelize;
