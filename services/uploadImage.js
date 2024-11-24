@@ -1,19 +1,19 @@
-const path = require("path");
-const fs = require("fs");
-const uniqid = require("uniqid");
+import { resolve as _resolve } from "path";
+import { existsSync, mkdirSync, readdirSync, renameSync } from "fs";
+import uniqid from "uniqid";
 
 class FileSystem {
   constructor() {}
 
   crearCarpetaUsuario(UserId) {
-    const pathUser = path.resolve(__dirname, "../uploads", userId);
-    const pathUserTemp = path.resolve(pathUser, "temp"); // TAMBIEN PUEDE CONCATENARSE pathUser + "/temp" PERO NO ES LO MAS RECOMENDADO.
+    const pathUser = _resolve(__dirname, "../uploads", userId);
+    const pathUserTemp = _resolve(pathUser, "temp"); // TAMBIEN PUEDE CONCATENARSE pathUser + "/temp" PERO NO ES LO MAS RECOMENDADO.
 
-    const existe = fs.existsSync(pathUser);
+    const existe = existsSync(pathUser);
 
     if (!existe) {
-      fs.mkdirSync(pathUser);
-      fs.mkdirSync(pathUserTemp);
+      mkdirSync(pathUser);
+      mkdirSync(pathUserTemp);
     }
 
     return pathUserTemp;
@@ -42,46 +42,46 @@ class FileSystem {
   }
 
   obtenerImagenesTemp(userId) {
-    const pathTemp = path.resolve(__dirname, "../uploads", userId, "temp");
-    return fs.readdirSync(pathTemp) || [];
+    const pathTemp = _resolve(__dirname, "../uploads", userId, "temp");
+    return readdirSync(pathTemp) || [];
   }
   imagenDeTempHaciaPost(userId) {
-    const pathUserTemp = path.resolve(__dirname, "../uploads", userId, "temp");
-    const pathUserPost = path.resolve(__dirname, "../uploads", userId, "post");
+    const pathUserTemp = _resolve(__dirname, "../uploads", userId, "temp");
+    const pathUserPost = _resolve(__dirname, "../uploads", userId, "post");
 
-    if (!fs.existsSync(pathUserTemp)) {
+    if (!existsSync(pathUserTemp)) {
       return [];
     }
-    if (!fs.existsSync(pathUserPost)) {
-      fs.mkdirSync(pathUserPost);
+    if (!existsSync(pathUserPost)) {
+      mkdirSync(pathUserPost);
     }
     const imagenTemp = this.obtenerImagenesTemp(userId);
     imagenTemp.forEach((imagen) => {
-      fs.renameSync(`${pathUserTemp}/${imagen}`, `${pathUserPost}/${imagen}`);
+      renameSync(`${pathUserTemp}/${imagen}`, `${pathUserPost}/${imagen}`);
     });
 
     return imagenTemp;
   }
   getPhotoUrl(iserId, img) {
-    const pathPhoto = path.resolve(
+    const pathPhoto = _resolve(
       __dirname,
       "../uploads",
       userId,
       "post",
       img
     );
-    if (fs.existsSync(pathPhoto)) {
+    if (existsSync(pathPhoto)) {
       return pathPhoto;
     } else {
-      return path.resolve(__dirname, "../assets", "default_image.png");
+      return _resolve(__dirname, "../assets", "default_image.png");
     }
   }
   validarPathUpload() {
-    const pathUpload = path.resolve(__dirname, "../uploads");
-    if (!fs.existsSync(pathUpload)) {
-      fs.mkdirSync(pathUpload);
+    const pathUpload = _resolve(__dirname, "../uploads");
+    if (!existsSync(pathUpload)) {
+      mkdirSync(pathUpload);
     }
   }
 }
 
-module.exports = FileSystem;
+export {FileSystem};

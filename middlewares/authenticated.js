@@ -1,10 +1,11 @@
 "use strict";
 
-var jwt = require("jwt-simple");
-var moment = require("moment");
+import pkg from 'jwt-simple';
+const { decode } = pkg;
+import moment from "moment";
 var secret = "esta_es_la_clave_secreta_1234_0987";
 
-exports.authenticated = (req, res, next) => {
+export function authenticated(req, res, next) {
   const { authorization } = req.headers;
   // COMPROBAR SI LLEGA AUTORISACION
   if (!req.headers.authorization) {
@@ -16,7 +17,7 @@ exports.authenticated = (req, res, next) => {
   var token = authorization.replace(/['"]+/g, "");
   try {
     // DECODIFICAR TOKEN
-    var payload = jwt.decode(token, secret);
+    var payload = decode(token, secret);
     // COMPROBAR LA EXPIRACION DEL TOKEN
     if (payload.exp <= moment().unix()) {
       return res.status(404).send({
@@ -32,4 +33,4 @@ exports.authenticated = (req, res, next) => {
   req.user = payload;
   // REALIZAR SIGUIENTE ACCION DE LA RUTA
   next();
-};
+}

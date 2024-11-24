@@ -1,18 +1,13 @@
-const express = require("express");
-const router = express.Router();
-// const petController = require("../../controllers/pets");
-const cirugiaController = require("../../controllers/cirugia");
-const { validate_cirugia } = require("../../middlewares/validateData");
-const md_auth = require("../../middlewares/authenticated");
+import express from "express";
+const cirugiaRouter = express.Router();
+import { CirugiaController } from"../../controllers/cirugia.js";
+import { validate_cirugia } from"../../middlewares/validateData.js";
+import { authenticated } from"../../middlewares/authenticated.js";
 
-router.post(
-  "/new/",
-  [md_auth.authenticated, validate_cirugia],
-  cirugiaController.save
-);
-router.put("/update", md_auth.authenticated, cirugiaController.update);
+cirugiaRouter.post("/new", [authenticated, validate_cirugia], new CirugiaController().save);
+cirugiaRouter.put("/update", authenticated, new CirugiaController().update);
 
-router.get("/getcirugia", md_auth.authenticated, cirugiaController.getcirugia);
-router.delete("/delete", md_auth.authenticated, cirugiaController.delete);
+cirugiaRouter.get("/getcirugia", authenticated, new CirugiaController().getcirugia);
+cirugiaRouter.delete("/delete", authenticated, new CirugiaController().delete);
 
-module.exports = router;
+export {cirugiaRouter};

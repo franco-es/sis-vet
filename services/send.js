@@ -1,5 +1,5 @@
 "use strict";
-const nodemailer = require("nodemailer");
+import { createTransport, getTestMessageUrl } from "nodemailer";
 
 function registerEmail(email, name) {
   const content = `
@@ -8,7 +8,7 @@ function registerEmail(email, name) {
       <p>Espero disfrutes tu experiencia con SISVET</p>
     `;
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
+  let transporter = createTransport({
     host: "smtp.mailtrap.io",
     port: 2525,
     secure: false, // true for 465, false for other ports
@@ -31,10 +31,10 @@ function registerEmail(email, name) {
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
   // Preview only available when sending through an Ethereal account
-  console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  console.log("Preview URL: %s", getTestMessageUrl(info));
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
-module.exports = { registerEmail: registerEmail };
+export default registerEmail;
 
 // 0150813801000123018390

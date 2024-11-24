@@ -1,9 +1,10 @@
 "use strict";
+import { Pet } from "../models/owner_pet.js";
 
-const { Pet } = require("../models/owner_pet");
 
-const controller = {
-  save: async (req, res) => {
+class OwnerController{
+  constructor(){};
+  async save (req, res) {
     const { nombre, apellido, telefono, direccion } = req.body;
     const { idPet } = req.query;
 
@@ -26,8 +27,8 @@ const controller = {
           status: "400",
           message: "hubo un error",
         });
-  },
-  getOwner: (req, res) => {
+  }
+  async getOwner(req, res) {
     const { idPet } = req.query;
     Pet.findById(idPet, (err, owner) => {
       !owner
@@ -47,7 +48,8 @@ const controller = {
             owner: owner.owner,
           });
     });
-  },
-};
+  }
+}
 
-module.exports = controller;
+
+export {OwnerController};

@@ -1,10 +1,10 @@
 "use strict";
 
-const { Pet } = require("./../models/owner_pet");
-// const petController = require("./pets");
+import  { Pet } from "../models/owner_pet.js";
 
-const controller = {
-  save: async (req, res) => {
+class CirugiaController{
+  constructor(){}
+  async save (req, res) {
     const { idPet } = req.query;
     const { fecha, contenido } = req.body;
 
@@ -24,8 +24,8 @@ const controller = {
         res.status(400).send({ message: "ocurrio un error", error: err });
       }
     });
-  },
-  update: async (req, res) => {
+  }
+  update (req, res) {
     const { idPet, idCirugia } = req.query;
     const { fecha, contenido } = req.body;
     Pet.updateOne(
@@ -55,8 +55,8 @@ const controller = {
             });
       }
     );
-  },
-  getcirugia: (req, res) => {
+  }
+  getcirugia(req, res) {
     const { idPet } = req.query;
     Pet.findById(idPet, (err, result) => {
       res.status(200).send({
@@ -64,8 +64,8 @@ const controller = {
         resultado: result.cirugia,
       });
     });
-  },
-  delete: async (req, res) => {
+  }
+  async delete (req, res) {
     const { idPet, idCirugia } = req.query;
     Pet.updateOne(
       { _id: idPet },
@@ -93,6 +93,7 @@ const controller = {
             });
       }
     );
-  },
-};
-module.exports = controller;
+  }
+
+}
+export {CirugiaController};

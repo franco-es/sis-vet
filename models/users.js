@@ -1,91 +1,35 @@
 "use strict";
-const { Model, DataTypes } = require('sequelize');
+import DataTypes from "sequelize";
+import {conn} from "../services/sequelize.js";
 
-class Veterinario extends Model {}
-class Usuario extends Model {}
+const sequelize = conn.sequelize;
 
-module.exports = (sequelize) => {
-  // Definimos el modelo Veterinario
-  Veterinario.init(
-    {
-      nombre: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      apellido: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      matricula: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      imagen: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-    },
-    {
-      sequelize,
-      modelName: 'Veterinario',
-      timestamps: false,
+const User = sequelize.define("sv_user",{
+  name:{type: DataTypes.STRING},
+  phone:{type: DataTypes.STRING},
+  email:{type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    validate:{
+      isEmail: true
     }
-  );
+  },
+  pass:{type: DataTypes.STRING},
+  role:{type: DataTypes.STRING},
+  active:{type: DataTypes.STRING},
+  deleted:{type: DataTypes.STRING},
+});
+const Vete = sequelize.define("sv_veterinario",{
+  name:{type: DataTypes.STRING},
+  phone:{type: DataTypes.STRING},
+  age:{type: DataTypes.STRING},
+  img_url:{type: DataTypes.STRING},
+  active:{type: DataTypes.STRING},
+  deleted:{type: DataTypes.STRING},
+});
 
-  // Definimos el modelo Usuario
-  Usuario.init(
-    {
-      nombre: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      telefono: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: {
-          isEmail: true,
-        },
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      role: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'user',
-      },
-      imagen: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      habilitado: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
-      eliminado: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-    },
-    {
-      sequelize,
-      modelName: 'Usuario',
-      timestamps: false,
-    }
-  );
+User.hasMany(Vete,{
+  foreignKey: "userId"
+});
 
-  // Relación: Un usuario tiene muchos veterinarios
-  Usuario.hasMany(Veterinario, { foreignKey: 'usuarioId', as: 'veterinarios' });
-  Veterinario.belongsTo(Usuario, { foreignKey: 'usuarioId', as: 'usuario' });
-
-  return { Usuario, Veterinario };
-};
+export {Vete, User}

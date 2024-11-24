@@ -1,22 +1,22 @@
-const express = require("express");
-const router = express.Router();
-const employeeController = require("./../controllers/veterinario");
-const { validate_employee } = require("./../middlewares/validateData");
-const md_auth = require("./../middlewares/authenticated");
+import { Router } from "express";
+const employeeRouter = Router();
+import { EmployeeController } from "./../controllers/veterinario.js";
+import { validate_employee } from "./../middlewares/validateData.js";
+import { authenticated } from "./../middlewares/authenticated.js";
 
-router.post(
+employeeRouter.post(
   "/new",
-  [md_auth.authenticated, validate_employee],
-  employeeController.save
+  [authenticated, validate_employee],
+  new EmployeeController().save
 );
-router.get("/get", [md_auth.authenticated], employeeController.getVets);
-router.put(
+employeeRouter.get("/get", [authenticated],  new EmployeeController().getVets);
+employeeRouter.put(
   "/update",
-  [md_auth.authenticated, validate_employee],
-  employeeController.update
+  [authenticated, validate_employee],
+  new EmployeeController().update
 );
-router.post("/remove", md_auth.authenticated, employeeController.delete);
-// router.delete('/delete/:id', userController.deleteVet);
-// router.get('/admin/all', userController.getAll);
+employeeRouter.post("/remove", authenticated, new EmployeeController().delete);
+// employeeRouter.delete('/delete/:id', userController.deleteVet);
+// employeeRouter.get('/admin/all', userController.getAll);
 
-module.exports = router;
+export {employeeRouter};

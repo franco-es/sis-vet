@@ -1,10 +1,10 @@
 "use strict";
-
-const { Pet } = require("./../models/owner_pet");
+import { Pet } from "./../models/owner_pet.js";
 // const petController = require("./pets");
 
-const controller = {
-  save: async (req, res) => {
+class ConsultaController{
+  constructor(){}
+  async save(req, res) {
     const { idPet } = req.query;
     const { fecha, contenido, diagnostico, tratamiento } = req.body;
 
@@ -26,8 +26,8 @@ const controller = {
         res.status(400).send({ message: "ocurrio un error", error: err });
       }
     });
-  },
-  update: async (req, res) => {
+  }
+  async update(req, res) {
     const { idPet, idConsulta } = req.query;
     const { fecha, contenido, diagnostico, tratamiento } = req.body;
     Pet.updateOne(
@@ -59,8 +59,8 @@ const controller = {
             });
       }
     );
-  },
-  getConsultas: (req, res) => {
+  }
+  getConsultas(req, res) {
     const { idPet } = req.query;
     Pet.findById(idPet, (err, result) => {
       res.status(200).send({
@@ -68,8 +68,8 @@ const controller = {
         resultado: result.consultas,
       });
     });
-  },
-  delete: async (req, res) => {
+  }
+  async delete (req, res) {
     const { idPet, idConsulta } = req.query;
     Pet.updateOne(
       { _id: idPet },
@@ -97,6 +97,7 @@ const controller = {
             });
       }
     );
-  },
-};
-module.exports = controller;
+  }
+}
+
+export {ConsultaController}

@@ -1,17 +1,18 @@
 "use strict";
 
-var jwt = require("jwt-simple");
-var moment = require("moment");
+import pkg from 'jwt-simple';
+const { encode } = pkg;
+import moment from "moment";
 
-exports.createToken = (user) => {
+export function createToken(user) {
   var payload = {
     sub: user._id,
-    nombre: user.nombre,
+    nombre: user.name,
     email: user.email,
     role: user.role,
-    image: user.image,
+    image: user.img_url,
     iat: moment().unix(),
     exp: moment().add(30, "days").unix,
   };
-  return jwt.encode(payload, "esta_es_la_clave_secreta_1234_0987");
-};
+  return encode(payload, "esta_es_la_clave_secreta_1234_0987");
+}
