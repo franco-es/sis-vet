@@ -1,14 +1,16 @@
-const mongoose = require('mongoose');
-const { INTEGER } = require('sequelize');
+// "use strict";
+// const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
-var proveedorSchema = Schema({
-    nombre: String,
-    dir: String,
-    phone: INTEGER,
-})
+// var proveedorSchema = Schema({
+//     nombre: String,
+//     telefono: Number,
+//     email: String,
+//     direccion: String,
+//     cuit: String
+// })
 
-const Proveedor = mongoose.model('Proveedor', proveedorSchema);
+// const Proveedor = mongoose.model('Proveedor', proveedorSchema);
 
-module.exports = {Proveedor};
+// module.exports = {Proveedor};

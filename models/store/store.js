@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
-const { INTEGER } = require('sequelize');
+// const mongoose = require('mongoose');
+// const { INTEGER } = require('sequelize');
 
-const Schema = mongoose.Schema;
+// const Schema = mongoose.Schema;
 
-var product = Schema({
-    nombre: String,
-    precio: INTEGER,
-    proveedor: { type: Schema.ObjectId, ref: "Proveedor" },
-})
+// var product = Schema({
+//     nombre: String,
+//     precio: INTEGER,
+//     proveedor: { type: Schema.ObjectId, ref: "Proveedor" },
+// })
 
-const Producto = mongoose.model('Producto', product);
+// const Producto = mongoose.model('Producto', product);
 
-module.exports = {Producto};
+// module.exports = {Producto};

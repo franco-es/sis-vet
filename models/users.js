@@ -1,36 +1,91 @@
 "use strict";
-const mongoose = require("mongoose");
-// const { delete } = require("./../app");
-const Schema = mongoose.Schema;
+const { Model, DataTypes } = require('sequelize');
 
-var veteSChema = Schema({
-  nombre: String,
-  apellido: String,
-  matricula: { type: String, Unique: true },
-  imagen: String,
-});
+class Veterinario extends Model {}
+class Usuario extends Model {}
 
-var userSchema = Schema({
-  nombre: String,
-  telefono: String,
-  email: {
-    type: String,
-    Unique: true,
-  },
-  password: String,
-  role: String,
-  imagen: String,
-  habilitado: Boolean,
-  eliminado: Boolean,
-  veterinarios: [veteSChema],
-});
+module.exports = (sequelize) => {
+  // Definimos el modelo Veterinario
+  Veterinario.init(
+    {
+      nombre: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      apellido: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      matricula: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+      imagen: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Veterinario',
+      timestamps: false,
+    }
+  );
 
-const Veterinaria = mongoose.model("Veterinaria", userSchema);
+  // Definimos el modelo Usuario
+  Usuario.init(
+    {
+      nombre: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      telefono: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'user',
+      },
+      imagen: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      habilitado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      eliminado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Usuario',
+      timestamps: false,
+    }
+  );
 
-module.exports = { Veterinaria };
-// userSchema.methods.toJSON = () => {
-//   const obj = this.toObjct();
-//   delete obj.password;
+  // Relación: Un usuario tiene muchos veterinarios
+  Usuario.hasMany(Veterinario, { foreignKey: 'usuarioId', as: 'veterinarios' });
+  Veterinario.belongsTo(Usuario, { foreignKey: 'usuarioId', as: 'usuario' });
 
-//   return obj;
-// };
+  return { Usuario, Veterinario };
+};

@@ -9,6 +9,8 @@ const app = express();
 
 // CONFIGURAR ARCHIVOS DE RUTAS
 const user_routes = require("./routes/usuarios");
+const proveedor_routes = require("./routes/proveedorRoute");
+const producto_routes = require("./routes/product");
 const employee_routes = require("./routes/employee");
 const owner_routes = require("./routes/owner");
 const pet_routes = require("./routes/mascotas/pets");
@@ -34,6 +36,8 @@ app.use((req, res, next) => {
 
 // REESCRIBIMOS LAS RUTAS
 app.use("/api/user", user_routes);
+app.use("/api/proveedor", proveedor_routes);
+app.use("/api/producto", producto_routes);
 app.use("/api/employee", employee_routes);
 app.use("/api/owner", owner_routes);
 app.use("/api/pet", pet_routes);
