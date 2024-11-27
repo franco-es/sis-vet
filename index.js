@@ -1,8 +1,8 @@
 'use strict'
 
-// var mongoose = require("mongoose");
 var app = require('./app');
 var log = require('npmlog');
+//importamos los modelos de sequelize para ser sincronizados en caso de cambios
 var usersModels = require("./models/users");
 var ownerPetsModels = require("./models/owner_pet");
 
@@ -26,19 +26,4 @@ sequelize.authenticate().then(() => {
     log.error(err)
     log.error("error conectandose a la db.")
 })
-
-
-//mongoose.set("useFindAndModify", false);
-
-// mongoose.Promise = global.Promise;
-// mongoose.connect("mongodb://127.0.0.1:27017/SisVet", {useNewUrlParser: true, useUnifiedTopology: true})
-// const db = mongoose.connection;
-
-
-// db.on('error', console.error.bind(console, 'connection error:'));
-// db.once('open', function() {
-//     app.listen(port, () => {
-//         log.info("El servidor http://localhost:8550 está funcionando !!!");
-//     });
-// });
 

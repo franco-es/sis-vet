@@ -1,10 +1,13 @@
-const { Veterinaria } = require("../models/users");
+var usersModels = require("../models/users");
+const sequelize = require('../services/sequelize');
 
 const checkEmailUpdate = async (req, res, next) => {
   const { email } = req.body;
   const emailSub = req.user.email;
+  
+  const {Usuario} = usersModels(sequelize);
 
-  const user = await Veterinaria.findOne({ email: email });
+  const user = await Usuario.findOne({where:{ email: email} });
   // if (err) {
   //   // un error indica que hubo problemas con la consulta
   //   res.status(500).json({
@@ -33,8 +36,9 @@ const checkEmailUpdate = async (req, res, next) => {
 };
 const checkEmail = async (req, res, next) => {
   const { email } = req.body;
+  const {Usuario} = usersModels(sequelize);
 
-  const user = await Veterinaria.findOne({ email: email });
+  const user = await Usuario.findOne({where:{ email: email} });
   if (user === null) {
     console.log(user);
     next();

@@ -1,40 +1,48 @@
 "use strict";
 
 const bcrypt = require("bcrypt");
+const sequelize = require('../services/sequelize');
 const fs = require("fs");
 const path = require("path");
 const { Veterinaria } = require("./../models/users");
 const jwt = require("../services/jwt");
 const registerEmail = require("../services/send");
 const FileSystem = require("../services/uploadImage");
+var usersModels = require("../models/users");
 // const { default: validator } = require("validator");
 
 const saltRouds = 10;
 const salt = bcrypt.genSaltSync(saltRouds);
 
 const controller = {
+  encriptPassword: async (password) => {
+    return await bcrypt.hash(password, salt);
+  },
+
   save: async (req, res) => {
     const { nombre, telefono, email, password } = req.body;
 
-    const user = new Veterinaria();
-    user.nombre = nombre;
-    user.telefono = telefono;
-    user.email = email.toLowerCase();
-    user.role = "veterinaria";
-    user.imagen = null;
-    user.habilitado = 1;
-    user.eliminado = 0;
+    const {Usuario} = usersModels(sequelize);
 
-    let pass = await  bcrypt.hash(password, salt);
-    user.password = pass;
-    const data = await user.save();
+    let pass = await controller.encriptPassword(password);
+    const user = {
+      nombre: nombre,
+      telefono: telefono,
+      email: email.toLowerCase(),
+      role: "veterinaria",
+      imagen: null,
+      habilitado: 1,
+      eliminado: 0,
+      password : pass
+    };
+
+    const data = await Usuario.create(user)
     let name = data.nombre;
     let send = registerEmail.registerEmail(email, name);
     return res.status(200).send({
       message: "GENIAL! SE GUARDO EL USUARIO",
       user: user,
     });
-    
   },
   login: (req, res) => {
     const { email, password, getToken } = req.body;
@@ -112,7 +120,7 @@ const controller = {
       imagen: imagen,
       guardarArchivo: saveFile,
     });
-  },
+  }
 };
 
 module.exports = controller;
