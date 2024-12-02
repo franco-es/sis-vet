@@ -6,9 +6,15 @@ import * as ownerPetsModels from './models/owner_pet.js';
 // Sincronización de modelos con Sequelize
 const syncModels = async () => {
     try {
+        
         await usersModels.User.sync();
         await usersModels.Vete.sync();
+        await ownerPetsModels.Owner.sync();
+        await ownerPetsModels.Cirugia.sync();
+        await ownerPetsModels.Vacuna.sync();
+        await ownerPetsModels.Consulta.sync();
         await ownerPetsModels.Pet.sync();
+
         log.info('Sync', 'Modelos sincronizados con éxito');
     } catch (error) {
         log.error('Sync', 'Error al sincronizar los modelos:', error);
