@@ -1,55 +1,125 @@
 "use strict";
-import { Pet } from "../models/owner_pet.js";
+import { Owner, Pet } from "../models/owner_pet.js";
 
+class OwnerController {
+  constructor() {}
 
-class OwnerController{
-  constructor(){};
-  async save (req, res) {
+  // Crear un nuevo dueño y asociarlo a una mascota
+  async save(req, res) {
     const { nombre, apellido, telefono, direccion } = req.body;
     const { idPet } = req.query;
 
-    const mascota = await Pet.findOne({ _id: idPet });
+    try {
+      const pet = await Pet.findByPk(idPet); // Busca la mascota por su ID
+      if (!pet) {
+        return res.status(404).send({ status: "error", message: "Mascota no encontrada" });
+      }
 
-    mascota.owner = {
-      nombre: nombre,
-      apellido: apellido,
-      telefono: telefono,
-      direccion: direccion,
-    };
-    const owneradded = await mascota.save();
-    owneradded
-      ? res.status(200).send({
-          status: "200",
-          message: "success",
-          owner: owneradded,
-        })
-      : res.status(400).send({
-          status: "400",
-          message: "hubo un error",
-        });
+      // Crea un nuevo dueño
+      const owner = await Owner.create({
+        nombre,
+        apellido,
+        telefono,
+        direccion,
+      });
+
+      // Asocia el dueño a la mascota
+      pet.ownerId = owner.id;
+      await pet.save();
+
+      res.status(200).send({
+        status: "success",
+        message: "Dueño creado y asociado a la mascota",
+        owner,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
   }
+
+  // Leer información del dueño asociado a una mascota
   async getOwner(req, res) {
     const { idPet } = req.query;
-    Pet.findById(idPet, (err, owner) => {
-      !owner
-        ? res.status(400).send({
-            status: "400",
-            message: "No se encuentra un dueÃ±o.",
-          })
-        : err
-        ? res.status(400).send({
-            status: "400",
-            message: "Ocurrio un error en la query",
-            error: err,
-          })
-        : res.status(200).send({
-            status: "200",
-            message: "success",
-            owner: owner.owner,
-          });
-    });
+
+    try {
+      const pet = await Pet.findByPk(idPet, { include: Owner }); // Incluye al dueño en la consulta
+      if (!pet || !pet.owner) {
+        return res.status(404).send({ status: "error", message: "Dueño no encontrado para esta mascota" });
+      }
+
+      res.status(200).send({
+        status: "success",
+        message: "Dueño encontrado",
+        owner: pet.owner,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
+  }
+
+  // Actualizar la información de un dueño
+  async update(req, res) {
+    const { idOwner } = req.query;
+    const { nombre, apellido, telefono, direccion } = req.body;
+
+    try {
+      const owner = await Owner.findByPk(idOwner); // Busca al dueño por su ID
+      if (!owner) {
+        return res.status(404).send({ status: "error", message: "Dueño no encontrado" });
+      }
+
+      // Actualiza los campos proporcionados
+      owner.nombre = nombre || owner.nombre;
+      owner.apellido = apellido || owner.apellido;
+      owner.telefono = telefono || owner.telefono;
+      owner.direccion = direccion || owner.direccion;
+
+      await owner.save();
+
+      res.status(200).send({
+        status: "success",
+        message: "Dueño actualizado",
+        owner,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
+  }
+
+  // Eliminar un dueño
+  async delete(req, res) {
+    const { idOwner } = req.query;
+
+    try {
+      const owner = await Owner.findByPk(idOwner); // Busca al dueño por su ID
+      if (!owner) {
+        return res.status(404).send({ status: "error", message: "Dueño no encontrado" });
+      }
+
+      await owner.destroy(); // Elimina el dueño
+
+      res.status(200).send({
+        status: "success",
+        message: "Dueño eliminado",
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
+  }
+
+  // Obtener todos los dueños
+  async getAll(req, res) {
+    try {
+      const owners = await Owner.findAll(); // Obtiene todos los dueños
+      res.status(200).send({
+        status: "success",
+        message: "Dueños encontrados",
+        owners,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
   }
 }
 
-
-export {OwnerController};
+export { OwnerController };

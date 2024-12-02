@@ -1,10 +1,8 @@
 "use strict";
 import DataTypes from "sequelize";
-import {conn} from "../services/sequelize.js";
+import {sequelize} from "../services/sequelize.js";
 
-const sequelize = conn.sequelize;
-
-const User = sequelize.define("sv_user",{
+const User = sequelize.define("user",{
   name:{type: DataTypes.STRING},
   phone:{type: DataTypes.STRING},
   email:{type: DataTypes.STRING,
@@ -19,7 +17,7 @@ const User = sequelize.define("sv_user",{
   active:{type: DataTypes.STRING},
   deleted:{type: DataTypes.STRING},
 });
-const Vete = sequelize.define("sv_veterinario",{
+const Vete = sequelize.define("veterinario",{
   name:{type: DataTypes.STRING},
   phone:{type: DataTypes.STRING},
   age:{type: DataTypes.STRING},

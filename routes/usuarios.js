@@ -3,17 +3,19 @@ const userRouter = Router();
 import { VeteController } from "./../controllers/veterinaria.js";
 import { create, login, update } from "./../middlewares/validateData.js";
 import { authenticated } from "./../middlewares/authenticated.js";
-import _default from "../middlewares/checkEmail.js";
-const { checkEmailUpdate, checkEmail } = _default;
+import { checkEmail, checkEmailUpdate } from "../middlewares/checkEmail.js";
 
-userRouter.post("/new", [create, checkEmail], new VeteController().save);
-userRouter.post("/login", login, new VeteController().login);
+
+var controller = new VeteController();
+
+userRouter.post("/new", [create, checkEmail], controller.save);
+userRouter.post("/login", login, controller.login);
 userRouter.put(
   "/update",
   [authenticated, update, checkEmailUpdate],
-  new VeteController().update
+  controller.update
 );
-userRouter.post("/uploadAvatar", authenticated, new VeteController().uploadImage);
+userRouter.post("/uploadAvatar", authenticated, controller.uploadImage);
 // userRouter.delete('/delete/:id', userController.deleteVet);
 // userRouter.get('/admin/all', userController.getAll);
 

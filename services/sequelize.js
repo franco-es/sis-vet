@@ -1,14 +1,14 @@
-const Sequelize = require("sequelize");
+import { Sequelize } from 'sequelize';
 
 const sequelize = new Sequelize(
     'sysvet',
     'root',
     'root',
     {
-        host: "localhost",
+        host: 'localhost',
         dialect: 'mysql',
         port: 3306
     }
-)
+);
 
-module.exports = sequelize;
+export { sequelize };

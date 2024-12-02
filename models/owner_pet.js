@@ -1,11 +1,9 @@
 "use strict";
 import DataTypes from "sequelize";
-import {conn} from "../services/sequelize.js";
-
-const sequelize = conn.sequelize;
+import {sequelize} from "../services/sequelize.js";
 
 
-const Consulta = sequelize.define("sv_consulta",{
+const Consulta = sequelize.define("consulta",{
   fecha: {type: DataTypes.STRING},
   contenido: {type: DataTypes.STRING},
   diagnostico: {type: DataTypes.STRING},
@@ -15,25 +13,25 @@ const Consulta = sequelize.define("sv_consulta",{
 
 
 
-const Vacuna = sequelize.define("sv_vacuna",{
+const Vacuna = sequelize.define("vacuna",{
   nombre: {type: DataTypes.STRING},
   fecha: {type: DataTypes.STRING},
   prox_aplicacion: {type: DataTypes.STRING},
 });
 
-const Cirugia = sequelize.define("sv_cirugia",{
+const Cirugia = sequelize.define("cirugia",{
   fecha: {type: DataTypes.STRING},
   contenido: {type: DataTypes.STRING},
 });
 
-const Owner = sequelize.define("sv_owner",{
+const Owner = sequelize.define("owner",{
   nombre: {type: DataTypes.STRING},
   apellido: {type: DataTypes.STRING},
   telefono: {type: DataTypes.STRING},
   direccion: {type: DataTypes.STRING},
 });
 
-const Pet = sequelize.define("sv_pet",{
+const Pet = sequelize.define("pet",{
   nombre: {type: DataTypes.STRING},
   especie: {type: DataTypes.STRING},
   raza: {type: DataTypes.STRING},

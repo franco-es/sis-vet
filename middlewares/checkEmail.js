@@ -1,54 +1,60 @@
-var usersModels = require("../models/users");
-const sequelize = require('../services/sequelize');
+import { User } from '../models/users.js';
 
+// Middleware para verificar si el correo electrónico ya existe (actualización)
 const checkEmailUpdate = async (req, res, next) => {
-  const { email } = req.body;
-  const emailSub = req.user.email;
-  
-  const {Usuario} = usersModels(sequelize);
+  try {
+    const { email } = req.body;
+    const emailSub = req.user.email;
 
-  const user = await Usuario.findOne({where:{ email: email} });
-  // if (err) {
-  //   // un error indica que hubo problemas con la consulta
-  //   res.status(500).json({
-  //     error: "Server error",
-  //   });
-  // }
-  if (user === null) {
-    console.log(emailSub);
-    console.log(user);
-    next();
-  }
-  if (user) {
-    if (user.email == emailSub) {
-      console.log(user.email);
-      console.log(emailSub);
-      next();
-    } else {
-      console.log(user.email);
-      console.log(emailSub);
-      // Si el usuario  existe
-      res.status(400).json({
-        message: "User found",
-      });
+    // Buscar si ya existe el correo electrónico
+    const user = await User.findOne({ where: { email } });
+
+    // Si no existe el usuario, pasamos al siguiente middleware
+    if (!user) {
+      console.log(`Email not found: ${emailSub}`);
+      return next();
     }
-  }
-};
-const checkEmail = async (req, res, next) => {
-  const { email } = req.body;
-  const {Usuario} = usersModels(sequelize);
 
-  const user = await Usuario.findOne({where:{ email: email} });
-  if (user === null) {
-    console.log(user);
-    next();
-  } else {
-    console.log(user);
-    // Si el usuario  existe
-    res.status(400).json({
-      message: "User found",
+    // Si el correo es el mismo que el del usuario actual, pasamos al siguiente middleware
+    if (user.email === emailSub) {
+      console.log(`User email matches: ${user.email}`);
+      return next();
+    }
+
+    // Si el correo existe y no es el del usuario actual, respondemos con error
+    console.log(`Email already in use: ${user.email}`);
+    return res.status(400).json({
+      message: 'User with this email already exists.',
     });
+  } catch (err) {
+    console.error('Error checking email during update:', err);
+    return res.status(500).json({ error: 'Server error' });
   }
 };
 
-export default { checkEmailUpdate, checkEmail };
+// Middleware para verificar si el correo electrónico ya existe (registro)
+const checkEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    // Buscar si ya existe el correo electrónico
+    const user = await User.findOne({ where: { email } });
+
+    // Si no existe el usuario, pasamos al siguiente middleware
+    if (!user) {
+      console.log('Email not found, proceeding...');
+      return next();
+    }
+
+    // Si el correo existe, respondemos con error
+    console.log(`Email already in use: ${user.email}`);
+    return res.status(400).json({
+      message: 'User with this email already exists.',
+    });
+  } catch (err) {
+    console.error('Error checking email during registration:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export { checkEmailUpdate, checkEmail };

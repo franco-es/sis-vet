@@ -1,173 +1,163 @@
 "use strict";
 
-import { Pet } from "./../models/owner_pet.js";
-import { FileSystem } from "../services/uploadImage.js";
-import fs from 'fs/promises'
-import * as path from 'path';
-//const FileSystem = require("../services/uploadImage").default;
-//const fs = require("fs");
-//const path = require("path");
+import { Pet, Owner, Consulta } from "../models/owner_pet.js";
+import fs from "fs/promises";
+import * as path from "path";
 
-class PetController{
-  constructor(){}
+class PetController {
+  constructor() {}
+
+  // Crear una nueva mascota y asociarla a un usuario (vete)
   async save(req, res) {
     const { sub } = req.user;
     const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
-    const mascota = await new Pet({
-      nombre: nombre,
-      especie: especie,
-      raza: raza,
-      color: color,
-      f_nacimiento: f_nacimiento,
-      vete: sub,
-    });
-    mascota.save((err, mascota) => {
-      err
-        ? res.status(400).send(err)
-        : res.status(200).send({
-            status: "200",
-            message: "success",
-            mascota: mascota,
-          });
-    });
+    try {
+      const pet = await Pet.create({
+        nombre,
+        especie,
+        raza,
+        color,
+        f_nacimiento,
+        vete: sub,
+      });
+
+      res.status(200).send({
+        status: "200",
+        message: "Mascota creada exitosamente",
+        pet,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al guardar la mascota", error: err });
+    }
   }
-  update (req, res) {
+
+  // Actualizar información de una mascota
+  async update(req, res) {
     const { idPet } = req.query;
     const { nombre, especie, raza, color, f_nacimiento } = req.body;
 
-    Pet.findByIdAndUpdate(
-      idPet,
-      {
-        $set: {
-          nombre: nombre,
-          especie: especie,
-          raza: raza,
-          color: color,
-          f_nacimiento: f_nacimiento,
-        },
-      },
-      { multi: true },
-      (err, result) => {
-        !result
-          ? res.status(400).send({ message: "no hay mascota" })
-          : err
-          ? res.status(400).send({ message: "no existe la mascota" })
-          : res.status(200).send({
-              status: "200",
-              message: "success",
-              pet: result,
-            });
-      }
-    );
-  }
-  async delete (req, res) {
-    const { idOwner, idPet } = req.query;
-
-    Owner.findById({ _id: idOwner }, (err, duenio) => {
-      if (err) {
-        return res.status(500).send({
-          status: "error",
-          message: "Error en la peticiÃ³n",
-          err,
-        });
+    try {
+      const pet = await Pet.findByPk(idPet);
+      if (!pet) {
+        return res.status(404).send({ message: "Mascota no encontrada" });
       }
 
-      if (!duenio) {
-        return res.status(404).send({
-          status: "error",
-          message: "No existe el duenio",
-        });
-      }
-      duenio.mascota.remove(idPet);
-      duenio.save((err) => {
-        return res.status(200).send({
-          status: "success",
-          duneio: duenio,
-        });
+      await pet.update({
+        nombre,
+        especie,
+        raza,
+        color,
+        f_nacimiento,
       });
-    });
+
+      res.status(200).send({
+        status: "200",
+        message: "Mascota actualizada exitosamente",
+        pet,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al actualizar la mascota", error: err });
+    }
   }
-  findOne (req, res) {
-    // const { sub } = req.user;
+
+  // Eliminar una mascota
+  async delete(req, res) {
     const { idPet } = req.query;
 
-    Pet.findById(idPet, (err, result) => {
-      !result
-        ? res.status(400).send({ message: "no hay mascota" })
-        : err
-        ? res.status(400).send({ message: "no existe la mascota" })
-        : res.status(200).send({
-            status: "200",
-            message: "success",
-            pet: result,
-          });
-    });
-  }
-  findAll (req, res) {
-    const { sub } = req.user;
-    Pet.find({ vete: sub }, (err, result) => {
-      !result
-        ? res.status(400).send({ message: "no hay resultado" })
-        : err
-        ? res
-            .status(400)
-            .send({ message: "no existen mascotas para este usuaio" })
-        : res.status(200).send({
-            status: "200",
-            message: "success",
-            pet: result,
-          });
-    });
-  }
-  uploadRayX (req, res) {
-    const { idPet, idConsulta } = req.query;
-    console.log(req.file);
-    Pet.updateOne(
-      { _id: idPet, "consultas._id": idConsulta },
-      {
-        $set: {
-          "consultas.$.photo": req.file.filename,
-        },
-      },
-      { multi: true },
-      (err, result) => {
-        !result
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-            })
-          : err
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-              error: err,
-            })
-          : res.status(200).send({
-              status: "success",
-              message: "consulta modificado",
-              Imagen: req.file.filename,
-            });
-      }
-    );
-  }
-  getRay (req, res) {
-    const { sub } = req.user;
-    const { idPet, idConsulta, img } = req.query;
-    const pathImg = `../statics/${sub}/${idPet}/${idConsulta}/${img}`;
-    const absolutePath = path.join(__dirname, pathImg);
-    console.log(absolutePath);
-    fs.access(absolutePath, fs.F_OK, (err) => {
-      if (err) {
-        console.error(err);
-        return;
+    try {
+      const pet = await Pet.findByPk(idPet);
+      if (!pet) {
+        return res.status(404).send({ message: "Mascota no encontrada" });
       }
 
-      //file exists
-      res.sendFile(path.join(__dirname, pathImg));
-    });
+      await pet.destroy();
+      res.status(200).send({ message: "Mascota eliminada exitosamente" });
+    } catch (err) {
+      res.status(400).send({ message: "Error al eliminar la mascota", error: err });
+    }
+  }
+
+  // Obtener una mascota por ID
+  async findOne(req, res) {
+    const { idPet } = req.query;
+
+    try {
+      const pet = await Pet.findByPk(idPet);
+      if (!pet) {
+        return res.status(404).send({ message: "Mascota no encontrada" });
+      }
+
+      res.status(200).send({
+        status: "200",
+        message: "Mascota encontrada",
+        pet,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al buscar la mascota", error: err });
+    }
+  }
+
+  // Obtener todas las mascotas asociadas a un veterinario (sub)
+  async findAll(req, res) {
+    const { sub } = req.user;
+
+    try {
+      const pets = await Pet.findAll({ where: { vete: sub } });
+      if (pets.length === 0) {
+        return res.status(404).send({ message: "No hay mascotas asociadas" });
+      }
+
+      res.status(200).send({
+        status: "200",
+        message: "Mascotas encontradas",
+        pets,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al obtener las mascotas", error: err });
+    }
+  }
+
+  // Subir una imagen de rayos X y asociarla a una consulta
+  async uploadRayX(req, res) {
+    const { idPet, idConsulta } = req.query;
+
+    try {
+      const consulta = await Consulta.findOne({
+        where: { id: idConsulta, petId: idPet },
+      });
+
+      if (!consulta) {
+        return res.status(404).send({ message: "Consulta no encontrada" });
+      }
+
+      consulta.photo = req.file.filename;
+      await consulta.save();
+
+      res.status(200).send({
+        status: "success",
+        message: "Imagen de rayos X subida exitosamente",
+        photo: req.file.filename,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al subir la imagen", error: err });
+    }
+  }
+
+  // Obtener una imagen de rayos X asociada a una consulta
+  async getRay(req, res) {
+    const { sub } = req.user;
+    const { idPet, idConsulta, img } = req.query;
+
+    const pathImg = path.join(__dirname, `../statics/${sub}/${idPet}/${idConsulta}/${img}`);
+
+    try {
+      await fs.access(pathImg);
+      res.sendFile(pathImg);
+    } catch (err) {
+      res.status(404).send({ message: "Imagen no encontrada", error: err });
+    }
   }
 }
 
-
-export {PetController};
+export { PetController };

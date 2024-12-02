@@ -1,29 +1,27 @@
-'use strict'
+import { app } from './app.js';
+import log from 'npmlog';
+import * as usersModels from './models/users.js';
+import * as ownerPetsModels from './models/owner_pet.js';
 
-var app = require('./app');
-var log = require('npmlog');
-//importamos los modelos de sequelize para ser sincronizados en caso de cambios
-var usersModels = require("./models/users");
-var ownerPetsModels = require("./models/owner_pet");
+// Sincronización de modelos con Sequelize
+const syncModels = async () => {
+    try {
+        await usersModels.User.sync();
+        await usersModels.Vete.sync();
+        await ownerPetsModels.Pet.sync();
+        log.info('Sync', 'Modelos sincronizados con éxito');
+    } catch (error) {
+        log.error('Sync', 'Error al sincronizar los modelos:', error);
+    }
+};
 
-var port = process.env.PORT || 8550;
-
-const sequelize = require('./services/sequelize');
-
-sequelize.authenticate().then(() => {
-
-    const { Usuario, Veterinario} = usersModels(sequelize);
-    const { Consulta, Vacuna, Cirugia, Owner, Pet } = ownerPetsModels(sequelize);
-
-    sequelize.sync().then(() => {
-        console.log('Modelos sincronizados');
-      });
-
-    app.listen(port, () => {
-        log.info("El servidor http://localhost:8550 estÃ¡ funcionando !!!");
+// Iniciar el servidor
+const startServer = async () => {
+    await syncModels();
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        log.info('Server', `Servidor corriendo en http://localhost:${PORT}`);
     });
-}).catch((err)=> {
-    log.error(err)
-    log.error("error conectandose a la db.")
-})
+};
 
+startServer();

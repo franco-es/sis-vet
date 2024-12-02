@@ -1,196 +1,246 @@
-"use_strict";
+"use strict";
 
 import pkg from 'validator';
 const { isEmpty, isEmail } = pkg;
 
+// Middleware para validar la creación de un usuario
 const create = (req, res, next) => {
   const { nombre, telefono, email, password } = req.body;
+
   try {
-    var validate_nombre = !isEmpty(nombre);
-    var validate_telefono = !isEmpty(telefono);
-    var validate_email = !isEmpty(email) && isEmail(email);
-    var validate_password = !isEmpty(password);
+    const validate_nombre = !isEmpty(nombre);
+    const validate_telefono = !isEmpty(telefono);
+    const validate_email = !isEmpty(email) && isEmail(email);
+    const validate_password = !isEmpty(password);
+
+    // Si alguna validación falla, enviar error
+    if (!validate_nombre || !validate_telefono || !validate_email || !validate_password) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        nombre, telefono, email, password,
+      });
+    }
     next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      nombre,
-      telefono,
-      email,
-      password,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
 };
+
+// Middleware para validar el login
 const login = (req, res, next) => {
   const { email, password } = req.body;
+
   try {
-    var validate_email = !isEmpty(email) && isEmail(email);
-    var validate_password = !isEmpty(password);
+    const validate_email = !isEmpty(email) && isEmail(email);
+    const validate_password = !isEmpty(password);
+
+    if (!validate_email || !validate_password) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        email, password,
+      });
+    }
     next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      Email: email,
-      Contrasenia: password,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
 };
+
+// Middleware para validar la actualización de un usuario
 const update = (req, res, next) => {
   const { nombre, telefono, email } = req.body;
+
   try {
-    var validate_nombre = !isEmpty(nombre);
-    var validate_telefono = !isEmpty(telefono);
-    var validate_email = !isEmpty(email) && isEmail(email);
+    const validate_nombre = !isEmpty(nombre);
+    const validate_telefono = !isEmpty(telefono);
+    const validate_email = !isEmpty(email) && isEmail(email);
+
+    if (!validate_nombre || !validate_telefono || !validate_email) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        nombre, telefono, email,
+      });
+    }
     next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      nombre,
-      telefono,
-      email,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
 };
+
+// Middleware para validar datos de un empleado
 const validate_employee = (req, res, next) => {
   const { nombre, apellido, matricula } = req.body;
+
   try {
-    var validate_nombre = !isEmpty(nombre);
-    var validate_apellido = !isEmpty(apellido);
-    var validate_matricula = !isEmpty(matricula);
+    const validate_nombre = !isEmpty(nombre);
+    const validate_apellido = !isEmpty(apellido);
+    const validate_matricula = !isEmpty(matricula);
+
+    if (!validate_nombre || !validate_apellido || !validate_matricula) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        nombre, apellido, matricula,
+      });
+    }
     next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      nombre,
-      apellido,
-      matricula,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
 };
+
+// Middleware para validar datos del dueño
 const validate_owner = (req, res, next) => {
   const { nombre, apellido, telefono, direccion } = req.body;
+
   try {
-    validate_nombre = !isEmpty(nombre);
-    validate_apellido = !isEmpty(apellido);
-    validate_telefono = !isEmpty(telefono);
-    validate_direccion = !isEmpty(direccion);
+    const validate_nombre = !isEmpty(nombre);
+    const validate_apellido = !isEmpty(apellido);
+    const validate_telefono = !isEmpty(telefono);
+    const validate_direccion = !isEmpty(direccion);
+
+    if (!validate_nombre || !validate_apellido || !validate_telefono || !validate_direccion) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        nombre, apellido, telefono, direccion,
+      });
+    }
+    next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      nombre,
-      apellido,
-      telefono,
-      direccion,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
-  if (
-    validate_nombre &&
-    validate_apellido &&
-    validate_telefono &&
-    validate_direccion
-  ) {
-    next();
-  }
 };
+
+// Middleware para validar datos de la mascota
 const validate_pet = (req, res, next) => {
   const { nombre, especie, raza, color, f_nacimiento } = req.body;
+
   try {
-    validate_nombre = !isEmpty(nombre);
-    validate_especie = !isEmpty(especie);
-    validate_raza = !isEmpty(raza);
-    validate_color = !isEmpty(color);
-    validate_f_nacimiento = !isEmpty(f_nacimiento);
+    const validate_nombre = !isEmpty(nombre);
+    const validate_especie = !isEmpty(especie);
+    const validate_raza = !isEmpty(raza);
+    const validate_color = !isEmpty(color);
+    const validate_f_nacimiento = !isEmpty(f_nacimiento);
+
+    if (!validate_nombre || !validate_especie || !validate_raza || !validate_color || !validate_f_nacimiento) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        nombre, especie, raza, color, f_nacimiento,
+      });
+    }
+    next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      nombre,
-      especie,
-      raza,
-      color,
-      f_nacimiento,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
-  if (
-    validate_nombre &&
-    validate_especie &&
-    validate_raza &&
-    validate_color &&
-    validate_f_nacimiento
-  ) {
-    next();
-  }
 };
+
+// Middleware para validar la consulta
 const validate_consult = (req, res, next) => {
   const { fecha, contenido, diagnostico, tratamiento } = req.body;
 
   try {
-    validate_fecha = !isEmpty(fecha);
-    validate_contenido = !isEmpty(contenido);
-    validate_diagnostico = !isEmpty(diagnostico);
-    validate_tratamiento = !isEmpty(tratamiento);
+    const validate_fecha = !isEmpty(fecha);
+    const validate_contenido = !isEmpty(contenido);
+    const validate_diagnostico = !isEmpty(diagnostico);
+    const validate_tratamiento = !isEmpty(tratamiento);
+
+    if (!validate_fecha || !validate_contenido || !validate_diagnostico || !validate_tratamiento) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        fecha, contenido, diagnostico, tratamiento,
+      });
+    }
+    next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      fecha,
-      contenido,
-      diagnostico,
-      tratamiento,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
-  if (
-    validate_fecha &&
-    validate_contenido &&
-    validate_diagnostico &&
-    validate_tratamiento
-  ) {
-    next();
-  }
 };
+
+// Middleware para validar datos de la vacuna
 const validate_vacuna = (req, res, next) => {
   const { fecha, nombre, prox_aplicacion } = req.body;
 
   try {
-    validate_fecha = !isEmpty(fecha);
-    validate_nombre = !isEmpty(nombre);
-    validate_prox_aplicacion = !isEmpty(prox_aplicacion);
+    const validate_fecha = !isEmpty(fecha);
+    const validate_nombre = !isEmpty(nombre);
+    const validate_prox_aplicacion = !isEmpty(prox_aplicacion);
+
+    if (!validate_fecha || !validate_nombre || !validate_prox_aplicacion) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        fecha, nombre, prox_aplicacion,
+      });
+    }
+    next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      fecha,
-      nombre,
-      prox_aplicacion,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
-  if (validate_fecha && validate_nombre && validate_prox_aplicacion) {
-    next();
-  }
 };
+
+// Middleware para validar la cirugía
 const validate_cirugia = (req, res, next) => {
   const { fecha, contenido } = req.body;
 
   try {
-    validate_fecha = !isEmpty(fecha);
-    validate_contenido = !isEmpty(contenido);
+    const validate_fecha = !isEmpty(fecha);
+    const validate_contenido = !isEmpty(contenido);
+
+    if (!validate_fecha || !validate_contenido) {
+      return res.status(400).send({
+        status: "FAIL",
+        message: "Faltan datos por enviar en el validador",
+        fecha, contenido,
+      });
+    }
+    next();
   } catch (error) {
     res.status(400).send({
-      satus: "FAIL",
-      message: "faltan datos por enviar en el validador",
-      fecha,
-      contenido,
+      status: "FAIL",
+      message: "Hubo un error al procesar los datos",
+      error,
     });
   }
-  if (validate_fecha && validate_contenido) {
-    next();
-  }
 };
+
 export {
   create,
   login,

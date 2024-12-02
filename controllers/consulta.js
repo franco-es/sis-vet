@@ -1,103 +1,106 @@
 "use strict";
-import { Pet } from "./../models/owner_pet.js";
-// const petController = require("./pets");
+import { Pet, Consulta } from "./../models/owner_pet.js";
 
-class ConsultaController{
-  constructor(){}
+class ConsultaController {
+  constructor() {}
+
   async save(req, res) {
     const { idPet } = req.query;
     const { fecha, contenido, diagnostico, tratamiento } = req.body;
 
-    Pet.findById(idPet, (err, result) => {
-      try {
-        result.consultas.push({
-          fecha: fecha,
-          contenido: contenido,
-          diagnostico: diagnostico,
-          tratamiento: tratamiento,
-        });
-        result.save();
-        res.status(200).send({
-          status: "success",
-          message: "consulta agregada",
-          consultas: result.consultas,
-        });
-      } catch (err) {
-        res.status(400).send({ message: "ocurrio un error", error: err });
+    try {
+      const pet = await Pet.findByPk(idPet); // Busca la mascota por su ID
+      if (!pet) {
+        return res.status(404).send({ status: "error", message: "Mascota no encontrada" });
       }
-    });
-  }
-  async update(req, res) {
-    const { idPet, idConsulta } = req.query;
-    const { fecha, contenido, diagnostico, tratamiento } = req.body;
-    Pet.updateOne(
-      { _id: idPet, "consultas._id": idConsulta },
-      {
-        $set: {
-          "consultas.$.fecha": fecha,
-          "consultas.$.contenido": contenido,
-          "consultas.$.diagnostico": diagnostico,
-          "consultas.$.tratamiento": tratamiento,
-        },
-      },
-      (err, result) => {
-        !result
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-            })
-          : err
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-              error: err,
-            })
-          : res.status(200).send({
-              status: "success",
-              message: "consulta modificado",
-              empleado: result,
-            });
-      }
-    );
-  }
-  getConsultas(req, res) {
-    const { idPet } = req.query;
-    Pet.findById(idPet, (err, result) => {
+
+      // Crea una nueva consulta asociada a la mascota
+      const consulta = await Consulta.create({
+        fecha,
+        contenido,
+        diagnostico,
+        tratamiento,
+        petId: pet.id, // Relación con la mascota
+      });
+
       res.status(200).send({
         status: "success",
-        resultado: result.consultas,
+        message: "Consulta agregada",
+        consulta,
       });
-    });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
   }
-  async delete (req, res) {
-    const { idPet, idConsulta } = req.query;
-    Pet.updateOne(
-      { _id: idPet },
-      {
-        $pull: {
-          consultas: { _id: idConsulta },
-        },
-      },
-      (err, result) => {
-        !result
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-            })
-          : err
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-              error: err,
-            })
-          : res.status(200).send({
-              status: "success",
-              message: "consulta eliminada",
-              empleado: result,
-            });
+
+  async update(req, res) {
+    const { idConsulta } = req.query;
+    const { fecha, contenido, diagnostico, tratamiento } = req.body;
+
+    try {
+      const consulta = await Consulta.findByPk(idConsulta); // Busca la consulta por su ID
+      if (!consulta) {
+        return res.status(404).send({ status: "error", message: "Consulta no encontrada" });
       }
-    );
+
+      // Actualiza la consulta
+      consulta.fecha = fecha;
+      consulta.contenido = contenido;
+      consulta.diagnostico = diagnostico;
+      consulta.tratamiento = tratamiento;
+
+      await consulta.save();
+
+      res.status(200).send({
+        status: "success",
+        message: "Consulta actualizada",
+        consulta,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
+  }
+
+  async getConsultas(req, res) {
+    const { idPet } = req.query;
+
+    try {
+      const consultas = await Consulta.findAll({
+        where: { petId: idPet }, // Filtra por el ID de la mascota
+      });
+
+      if (!consultas.length) {
+        return res.status(404).send({ status: "error", message: "No se encontraron consultas para esta mascota" });
+      }
+
+      res.status(200).send({
+        status: "success",
+        resultado: consultas,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
+  }
+
+  async delete(req, res) {
+    const { idConsulta } = req.query;
+
+    try {
+      const consulta = await Consulta.findByPk(idConsulta); // Busca la consulta por su ID
+      if (!consulta) {
+        return res.status(404).send({ status: "error", message: "Consulta no encontrada" });
+      }
+
+      await consulta.destroy(); // Elimina la consulta
+
+      res.status(200).send({
+        status: "success",
+        message: "Consulta eliminada",
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Ocurrió un error", error: err });
+    }
   }
 }
 
-export {ConsultaController}
+export { ConsultaController };

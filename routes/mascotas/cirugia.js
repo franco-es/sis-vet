@@ -7,7 +7,7 @@ import { authenticated } from"../../middlewares/authenticated.js";
 cirugiaRouter.post("/new", [authenticated, validate_cirugia], new CirugiaController().save);
 cirugiaRouter.put("/update", authenticated, new CirugiaController().update);
 
-cirugiaRouter.get("/getcirugia", authenticated, new CirugiaController().getcirugia);
+cirugiaRouter.get("/getcirugia", authenticated, new CirugiaController().getCirugia);
 cirugiaRouter.delete("/delete", authenticated, new CirugiaController().delete);
 
 export {cirugiaRouter};

@@ -4,7 +4,7 @@ import pkg from 'jwt-simple';
 const { encode } = pkg;
 import moment from "moment";
 
-export function createToken(user) {
+export default function createToken(user) {
   var payload = {
     sub: user._id,
     nombre: user.name,

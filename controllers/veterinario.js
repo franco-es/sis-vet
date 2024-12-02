@@ -1,100 +1,106 @@
 "use strict";
 
-import { Vete } from "./../models/users.js";
+import { User as Veterinaria, Vete as Veterinario } from "../models/users.js";
 
-class EmployeeController{
-  save (req, res) {
-    const { nombre, apellido, matricula } = req.body;
-    const { sub } = req.user;
-    Veterinaria.findById(sub, (err, result) => {
-      result.veterinarios.push({
-        nombre: nombre,
-        apellido: apellido,
-        matricula: matricula,
-        imagen: "test.png",
+class EmployeeController {
+  // Crear un nuevo veterinario asociado a una veterinaria
+  async save(req, res) {
+    const { name, phone, age, img_url } = req.body;
+    const { sub } = req.user; // ID del usuario (veterinaria) extraído del token
+
+    try {
+      const veterinaria = await Veterinaria.findByPk(sub);
+      if (!veterinaria) {
+        return res.status(404).send({ message: "Veterinaria no encontrada" });
+      }
+
+      const empleado = await Veterinario.create({
+        name,
+        phone,
+        age,
+        img_url,
+        active: "true",
+        deleted: "false",
+        userId: sub, // Asociación al usuario (veterinaria)
       });
-      result.save();
+
       res.status(200).send({
         status: "success",
-        message: "empleado agregado",
-        empleado: result,
+        message: "Empleado agregado",
+        empleado,
       });
-    });
+    } catch (err) {
+      res.status(400).send({ message: "Error al agregar empleado", error: err });
+    }
   }
-  getVets(req, res) {
+
+  // Obtener todos los veterinarios asociados a una veterinaria
+  async getVets(req, res) {
     const { sub } = req.user;
-    Veterinaria.findById(sub, (err, result) => {
+
+    try {
+      const veterinaria = await Veterinaria.findByPk(sub, {
+        include: [{ model: Veterinario }], // Incluye los veterinarios relacionados
+      });
+
+      if (!veterinaria) {
+        return res.status(404).send({ message: "Veterinaria no encontrada" });
+      }
+
       res.status(200).send({
         status: "success",
-        message: "empleados encontrados",
-        empleados: result.veterinarios,
+        message: "Empleados encontrados",
+        empleados: veterinaria.sv_veterinarios, // Relación automática con el modelo
       });
-    });
+    } catch (err) {
+      res.status(400).send({ message: "Error al obtener empleados", error: err });
+    }
   }
-  update (req, res) {
-    const { sub } = req.user;
-    const { employeeId } = req.query;
-    const { nombre, apellido, matricula } = req.body;
-    Veterinaria.updateOne(
-      { _id: sub, "veterinarios._id": employeeId },
-      {
-        $set: {
-          "veterinarios.$.nombre": nombre,
-          "veterinarios.$.apellido": apellido,
-          "veterinarios.$.matricula": matricula,
-        },
-      },
-      (err, result) => {
-        !result
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-            })
-          : err
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-              error: err,
-            })
-          : res.status(200).send({
-              status: "success",
-              message: "empleado modificado",
-              empleado: result,
-            });
+
+  // Actualizar información de un veterinario
+  async update(req, res) {
+    const { employeeId } = req.query; // ID del veterinario
+    const { name, phone, age, img_url } = req.body;
+
+    try {
+      const empleado = await Veterinario.findByPk(employeeId);
+      if (!empleado) {
+        return res.status(404).send({ message: "Empleado no encontrado" });
       }
-    );
+
+      await empleado.update({ name, phone, age, img_url });
+
+      res.status(200).send({
+        status: "success",
+        message: "Empleado modificado",
+        empleado,
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al modificar empleado", error: err });
+    }
   }
-  delete (req, res) {
-    const { sub } = req.user;
+
+  // Eliminar un veterinario (soft delete)
+  async delete(req, res) {
     const { employeeId } = req.query;
-    Veterinaria.updateOne(
-      { _id: sub },
-      {
-        $pull: {
-          veterinarios: { _id: employeeId },
-        },
-      },
-      (err, result) => {
-        !result
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-            })
-          : err
-          ? res.status(400).send({
-              status: "error",
-              message: "ocurrio un error en la query",
-              error: err,
-            })
-          : res.status(200).send({
-              status: "success",
-              message: "empleado eliminado",
-              empleado: result,
-            });
+
+    try {
+      const empleado = await Veterinario.findByPk(employeeId);
+      if (!empleado) {
+        return res.status(404).send({ message: "Empleado no encontrado" });
       }
-    );
+
+      // Actualiza el campo `deleted` para realizar un soft delete
+      await empleado.update({ deleted: "true", active: "false" });
+
+      res.status(200).send({
+        status: "success",
+        message: "Empleado eliminado",
+      });
+    } catch (err) {
+      res.status(400).send({ message: "Error al eliminar empleado", error: err });
+    }
   }
 }
 
-
-export { EmployeeController};
+export { EmployeeController };

@@ -57,7 +57,7 @@ class VacunaController{
       }
     );
   }
-  getvacunas (req, res) {
+  async getvacunas (req, res) {
     const { idPet } = req.query;
     Pet.findById(idPet, (err, result) => {
       res.status(200).send({
