@@ -3,41 +3,28 @@ import log from 'npmlog';
 import createToken from '../services/jwt.js';
 import registerEmail from '../services/send.js';
 import {FileSystem} from '../services/uploadImage.js';
-import { User } from '../models/users.js';
+import Usuario from '../models/Usuario.js';
+import {UserService} from '../services/userService.js';
 
 const saltRounds = 10;
 const salt = bcrypt.genSaltSync(saltRounds);
 
 class VeteController {
-  static async encriptPassword(password) {
-    return await bcrypt.hash(password, salt);
-  }
-
   async save(req, res) {
-    const { nombre, telefono, email, password } = req.body;
 
-    let pass = await VeteController.encriptPassword(password);
-    const user = {
-      nombre: nombre,
-      telefono: telefono,
-      email: email.toLowerCase(),
-      role: 'veterinaria',
-      imagen: null,
-      habilitado: 1,
-      eliminado: 0,
-      password: pass,
-    };
+    let userService = new UserService();
 
     try {
-      const data = await User.create(user);
-      let name = data.nombre;
-      let send = registerEmail.registerEmail(email, name);
-      log.info('Veterinaria creada ' + name);
+      let data = await userService.saveUser(req);
+      let name = data.dataValues.nombre;
+      let email = data.dataValues.email;
+      //let send = registerEmail.registerEmail(email, name);
       return res.status(200).send({
         message: 'GENIAL! SE GUARDO EL User',
-        user: user,
+        user: data.dataValues,
       });
     } catch (err) {
+      log.error(err)
       return res.status(400).send({
         status: 'error',
         message: 'Hubo un error al crear el User',
@@ -47,11 +34,13 @@ class VeteController {
   }
 
   async login(req, res) {
+    let userService = new UserService();
     const { email, password, getToken } = req.body;
     const Email = email.toLowerCase();
 
     try {
-      const user = await User.findOne({ where: { email: Email } });
+      const user = await userService.findByEmail(email);
+      console.log(user)
       if (!user) {
         return res.status(400).send({
           status: 'DENIED',
@@ -87,12 +76,14 @@ class VeteController {
   }
 
   async update(req, res) {
+    
+    let userService = new UserService();
     const { email, nombre, telefono } = req.body;
     const { sub } = req.user;
-    const Email = email.toLowerCase();
-
+    console.log(req.user)
     try {
-      const user = await User.findByPk(sub);
+      let user;
+      user = await userService.findByPk(sub);
 
       if (!user) {
         return res.status(404).send({
@@ -102,9 +93,9 @@ class VeteController {
 
       user.nombre = nombre;
       user.telefono = telefono;
-      user.email = email;
+      user.email = email.toLowerCase();
 
-      await user.save();
+      await userService.updateUser(user);
 
       return res.status(200).send({
         message: 'user updated',

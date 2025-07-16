@@ -1,11 +1,14 @@
 "use strict";
 
-import { User as Veterinaria, Vete as Veterinario } from "../models/users.js";
+import Veterinaria from "../models/Veterinaria.js";
+import UsuarioVeterinaria from "../models/UsuarioVeterinaria.js";
+import Usuario from "../models/Usuario.js";
+
 
 class EmployeeController {
   // Crear un nuevo veterinario asociado a una veterinaria
   async save(req, res) {
-    const { name, phone, age, img_url } = req.body;
+    const { name, phone, email, img_url, password } = req.body;
     const { sub } = req.user; // ID del usuario (veterinaria) extraído del token
 
     try {
@@ -14,14 +17,14 @@ class EmployeeController {
         return res.status(404).send({ message: "Veterinaria no encontrada" });
       }
 
-      const empleado = await Veterinario.create({
-        name,
-        phone,
-        age,
+      const userEmployee = await Usuario().create({
+        nombre: name,
+        telefono: phone,
+        email: email.toLowerCase(),
         img_url,
-        active: "true",
-        deleted: "false",
-        userId: sub, // Asociación al usuario (veterinaria)
+        habilitado: true,
+        eliminado: false,
+        password: password
       });
 
       res.status(200).send({
@@ -39,8 +42,8 @@ class EmployeeController {
     const { sub } = req.user;
 
     try {
-      const veterinaria = await Veterinaria.findByPk(sub, {
-        include: [{ model: Veterinario }], // Incluye los veterinarios relacionados
+      const veterinaria = await Veterinaria().findByPk(sub, {
+        include: [{ model: UsuarioVeterinaria() }], // Incluye los veterinarios relacionados
       });
 
       if (!veterinaria) {

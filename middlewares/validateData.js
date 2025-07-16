@@ -5,11 +5,11 @@ const { isEmpty, isEmail } = pkg;
 
 // Middleware para validar la creación de un usuario
 const create = (req, res, next) => {
-  const { nombre, telefono, email, password } = req.body;
+  const { name, phone, email, password } = req.body;
 
   try {
-    const validate_nombre = !isEmpty(nombre);
-    const validate_telefono = !isEmpty(telefono);
+    const validate_nombre = !isEmpty(name);
+    const validate_telefono = !isEmpty(phone);
     const validate_email = !isEmpty(email) && isEmail(email);
     const validate_password = !isEmpty(password);
 

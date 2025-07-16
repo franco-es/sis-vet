@@ -5,11 +5,12 @@ const { encode } = pkg;
 import moment from "moment";
 
 export default function createToken(user) {
+  console.log(user)
   var payload = {
-    sub: user._id,
-    nombre: user.name,
+    sub: user.id_usuario,
+    nombre: user.nombre,
     email: user.email,
-    role: user.role,
+    rol: user.rol,
     image: user.img_url,
     iat: moment().unix(),
     exp: moment().add(30, "days").unix,

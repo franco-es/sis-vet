@@ -10,12 +10,7 @@ const app = express();
 
 // CONFIGURAR ARCHIVOS DE RUTAS
 import { userRouter } from "./routes/usuarios.js";
-import { employeeRouter } from "./routes/employee.js";
-import { ownerRouter } from "./routes/ownerRoutes.js";
-import { petRouter } from "./routes/mascotas/pets.js";
-import { consultaRouter } from "./routes/mascotas/consulta.js";
-import { cirugiaRouter } from "./routes/mascotas/cirugia.js";
-import { vacunaRouter } from "./routes/mascotas/vacuna.js";
+
 
 // MIDDLEWARES
 app.use(json());
@@ -35,11 +30,11 @@ app.use((req, res, next) => {
 
 // REESCRIBIMOS LAS RUTAS
 app.use("/api/user", userRouter);
-app.use("/api/employee", employeeRouter);
+/*app.use("/api/employee", employeeRouter);
 app.use("/api/owner", ownerRouter);
 app.use("/api/pet", petRouter);
 app.use("/api/consulta", consultaRouter);
 app.use("/api/cirugia", cirugiaRouter);
-app.use("/api/vacuna", vacunaRouter);
+app.use("/api/vacuna", vacunaRouter);*/
 
 export {app};

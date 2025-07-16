@@ -1,49 +1,69 @@
-import { User } from "../models/users.js";
 // import { sequelize } from "../services/sequelize";
 import { hash as _hash } from "bcrypt";
+import { sequelize } from "./sequelize.js";
+import log from "npmlog";
 
+import usuarioModels from "../models/Usuario.js";
+class UserService {
+  constructor() {} 
 
-class UserService{
-  constructor(){};
-
-  copyProperties(dest, req){
-    const { nombre, telefono, email, password } = req.body;
-  
-    dest.name = nombre;
-    dest.phone = telefono;
+  copyProperties(dest, req) {
+    const { name, phone, email, password, role, apellido } = req.body;
+    dest.nombre = name;
+    dest.telefono = phone;
     dest.email = email;
-    dest.role = "veterinaria";
-    dest.img_url = null;
-    dest.active = 1;
-    dest.deleted = 0;
-    let salt = 3;
-    _hash(password, salt, (err, hash) => {
-      dest.pass = hash;
-    });
+    dest.habilitado = true;
+    dest.eliminado = false;
+    dest.password = password;
+    dest.apellido = apellido;
+    dest.rol = role;
+
+    return dest;
   }
 
-  findByEmail(email){
-    User.findOne({where:{email: email}})
-      .then((data) => {return data;})
+  async findByEmail(email) {
+    const Usuario = usuarioModels(sequelize);
+    let usuario = await Usuario
+      .findOne({ where: { email: email } });
+    return usuario.dataValues
   }
-  async saveOrUpdate(req){
-    const user = {};
+
+  async saveUser(req) {
+    log.info("creando Usuario.")
+    const Usuario = usuarioModels(sequelize);
+    let user = {};
     try {
-      this.copyProperties(user, req);
-      if(req.user != undefined){
-        User.update({
-          name: user.name,
-          phone: user.phone,
-          email: user.email},{where:{id: req.user.sub}})
-          .then(data => data);
-      }else{
-        User.create(user).then((data) => {return data});
-      }
+      user = this.copyProperties(user, req);
     } catch (error) {
-      throw new Error("error al crear o modificar un usuario")
+      log.error(error)
+      throw new Error("error al crear o modificar un usuario");
     }
+      
+    let data = await Usuario.create(user);
+    return data    
+  }
+
+  async updateUser(user) {
+    log.info("actualizando Usuario.")
+    console.log(user)
+    const Usuario = usuarioModels(sequelize);
+    let data = await Usuario.update(
+        {
+          nombre: user.nombre,
+          telefono: user.telefono,
+          email: user.email,
+        },
+        { where: { id_usuario: user.id_usuario } }
+      )
+    return data.dataValues
+  }
+
+
+  async findByPk(sub){
+    const Usuario = usuarioModels(sequelize);
+    let user = await Usuario.findByPk(sub);
+    return user.dataValues;
   }
 }
 
-
-export {UserService};
+export { UserService };
