@@ -10,7 +10,7 @@ const app = express();
 
 // CONFIGURAR ARCHIVOS DE RUTAS
 import { userRouter } from "./routes/usuarios.js";
-
+import { employeeRouter } from "./routes/employee.js";
 
 // MIDDLEWARES
 app.use(json());
@@ -30,8 +30,8 @@ app.use((req, res, next) => {
 
 // REESCRIBIMOS LAS RUTAS
 app.use("/api/user", userRouter);
-/*app.use("/api/employee", employeeRouter);
-app.use("/api/owner", ownerRouter);
+app.use("/api/employee", employeeRouter);
+/*app.use("/api/owner", ownerRouter);
 app.use("/api/pet", petRouter);
 app.use("/api/consulta", consultaRouter);
 app.use("/api/cirugia", cirugiaRouter);

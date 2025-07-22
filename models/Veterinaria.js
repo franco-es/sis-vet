@@ -1,15 +1,18 @@
 import { Model, DataTypes } from 'sequelize';
-import {sequelize} from "../services/sequelize.js";
+import { sequelize } from "../services/sequelize.js";
 
 class Veterinaria extends Model {
   static associate(models) {
-    Veterinaria.belongsToMany(models.Usuario, {
-      through: models.UsuarioVeterinaria,
-      foreignKey: 'id_veterinaria',
+    Veterinaria.belongsTo(models.Usuario, {
+      as: "veterinaria",
+      foreignKey: 'id_usuario',
+      constraints: true,
+      onDelete: 'SET NULL',
+      onUpdate: 'CASCADE'
     });
     Veterinaria.hasMany(models.Paciente, { foreignKey: 'id_veterinaria' });
-    Veterinaria.hasMany(models.Servicio, { foreignKey: 'id_veterinaria' });
-    Veterinaria.hasMany(models.Producto, { foreignKey: 'id_veterinaria' });
+    //Veterinaria.hasMany(models.Servicio, { foreignKey: 'id_veterinaria' });
+    //Veterinaria.hasMany(models.Producto, { foreignKey: 'id_veterinaria' });
   }
 }
 

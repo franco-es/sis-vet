@@ -45,7 +45,6 @@ class UserService {
 
   async updateUser(user) {
     log.info("actualizando Usuario.")
-    console.log(user)
     const Usuario = usuarioModels(sequelize);
     let data = await Usuario.update(
         {
@@ -64,6 +63,14 @@ class UserService {
     let user = await Usuario.findByPk(sub);
     return user.dataValues;
   }
+
+  async getAllVeterinarias(){
+    const Usuario = usuarioModels(sequelize);
+    let users = await Usuario.findAll();
+    let usersJSON = JSON.stringify(users, null, 2);
+    return usersJSON;
+  }
+
 }
 
 export { UserService };

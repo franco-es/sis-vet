@@ -109,7 +109,7 @@ class VeteController {
     }
   }
 
-  uploadImage(req, res) {
+  async uploadImage(req, res) {
     const fileSystem = new FileSystem();
     const image = req.file.img;
 
@@ -135,6 +135,18 @@ class VeteController {
       guardarArchivo: saveFile,
     });
   }
+
+  async getAll(req, res){
+
+    const userService = new UserService();
+    let vetes = [];
+    vetes = await userService.getAllVeterinarias();
+    return res.status(200).send({
+        data: JSON.parse(vetes),
+      });
+
+  }
+
 }
 
 export {VeteController};

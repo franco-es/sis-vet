@@ -3,34 +3,26 @@
 import Veterinaria from "../models/Veterinaria.js";
 import UsuarioVeterinaria from "../models/UsuarioVeterinaria.js";
 import Usuario from "../models/Usuario.js";
+import { UserService } from "../services/userService.js";
+import { UserVeterinariaService } from "../services/UserVeterinariaService.js";
 
 
 class EmployeeController {
   // Crear un nuevo veterinario asociado a una veterinaria
   async save(req, res) {
-    const { name, phone, email, img_url, password } = req.body;
-    const { sub } = req.user; // ID del usuario (veterinaria) extraído del token
+
+    let usuarioVeterinariaService = new UserVeterinariaService();
 
     try {
-      const veterinaria = await Veterinaria.findByPk(sub);
+      const veterinaria = await usuarioVeterinariaService.save(req);
       if (!veterinaria) {
         return res.status(404).send({ message: "Veterinaria no encontrada" });
       }
 
-      const userEmployee = await Usuario().create({
-        nombre: name,
-        telefono: phone,
-        email: email.toLowerCase(),
-        img_url,
-        habilitado: true,
-        eliminado: false,
-        password: password
-      });
-
       res.status(200).send({
         status: "success",
         message: "Empleado agregado",
-        empleado,
+        veterinaria,
       });
     } catch (err) {
       res.status(400).send({ message: "Error al agregar empleado", error: err });
@@ -41,14 +33,10 @@ class EmployeeController {
   async getVets(req, res) {
     const { sub } = req.user;
 
-    try {
-      const veterinaria = await Veterinaria().findByPk(sub, {
-        include: [{ model: UsuarioVeterinaria() }], // Incluye los veterinarios relacionados
-      });
+    let usuarioVeterinariaService = new UserVeterinariaService();
 
-      if (!veterinaria) {
-        return res.status(404).send({ message: "Veterinaria no encontrada" });
-      }
+    try {
+      const veterinaria = await usuarioVeterinariaService.getEmployeesByVeterinaria(sub);
 
       res.status(200).send({
         status: "success",
@@ -56,6 +44,7 @@ class EmployeeController {
         empleados: veterinaria.sv_veterinarios, // Relación automática con el modelo
       });
     } catch (err) {
+      console.log(err)
       res.status(400).send({ message: "Error al obtener empleados", error: err });
     }
   }
